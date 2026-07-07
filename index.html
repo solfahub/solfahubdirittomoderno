@@ -1,0 +1,3305 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solfa Hub</title>
+    <!-- Inclusione Tailwind CSS tramite CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ph: {
+                            bg: '#121212',
+                            panel: '#1b1b1b',
+                            accent: '#FF9900',
+                            accentHover: '#e68a00',
+                            text: '#e0e0e0',
+                            border: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Stili personalizzati aggiuntivi (Scrollbar) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121212; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF9900; 
+        }
+        
+        .radio-custom:checked + div {
+            border-color: #FF9900;
+            background-color: rgba(255, 153, 0, 0.1);
+        }
+        .radio-custom:checked + div .radio-circle {
+            background-color: #FF9900;
+            border-color: #FF9900;
+        }
+    </style>
+</head>
+<body class="bg-ph-bg text-ph-text font-sans h-screen flex overflow-hidden selection:bg-ph-accent selection:text-black">
+
+    <!-- Mobile Header (Visibile solo su schermi piccoli) -->
+    <div class="md:hidden fixed top-0 left-0 w-full bg-black border-b border-ph-border z-50 flex justify-between items-center p-4">
+        <div class="text-2xl font-bold tracking-tighter">
+            <span class="text-white">Solfa</span><span class="bg-ph-accent text-black px-2 py-1 rounded ml-1">Hub</span>
+        </div>
+        <button id="mobile-menu-btn" class="text-ph-accent p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+
+    <!-- Sidebar (Fissa su desktop, a comparsa su mobile) -->
+    <aside id="sidebar" class="fixed md:static top-0 left-0 h-full w-64 bg-black border-r border-ph-border flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-40">
+        <div class="p-6 text-3xl font-bold tracking-tighter hidden md:block">
+            <span class="text-white">Solfa</span><span class="bg-ph-accent text-black px-2 py-1 rounded ml-1">Hub</span>
+        </div>
+        
+        <!-- Pulsante chiusura menu mobile -->
+        <button id="close-menu-btn" class="md:hidden absolute top-4 right-4 text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+
+        <nav class="flex-1 mt-16 md:mt-8 space-y-2 px-4">
+            <button onclick="app.switchView('database')" id="nav-database" class="nav-btn w-full text-left px-4 py-3 rounded font-semibold text-gray-400 hover:text-white hover:bg-ph-panel transition-all border-l-4 border-transparent flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                Consulta Database
+            </button>
+            <button onclick="app.switchView('quiz')" id="nav-quiz" class="nav-btn w-full text-left px-4 py-3 rounded font-semibold text-gray-400 hover:text-white hover:bg-ph-panel transition-all border-l-4 border-transparent flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Quiz Continuo
+            </button>
+            <button onclick="app.switchView('simulatore')" id="nav-simulatore" class="nav-btn w-full text-left px-4 py-3 rounded font-semibold text-gray-400 hover:text-white hover:bg-ph-panel transition-all border-l-4 border-transparent flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Simulatore Esame
+            </button>
+        </nav>
+        
+        <div class="p-4 text-xs text-gray-600 text-center border-t border-ph-border">
+            Solfa Hub &copy; 2026
+        </div>
+    </aside>
+
+    <!-- Area Contenuto Principale -->
+    <main class="flex-1 h-full overflow-y-auto pt-20 md:pt-0 pb-10 bg-ph-bg relative">
+        <div id="content-container" class="max-w-5xl mx-auto p-4 md:p-8">
+            <!-- Il contenuto dinamico verrà iniettato qui -->
+        </div>
+    </main>
+
+    <!-- Template JavaScript -->
+    <script>
+        /**
+         * DATABASE GLOBALE DELLE DOMANDE
+         */
+        const domandeDatabase = [
+
+          {
+            id: "intermedia 1",
+            domanda: "la forma di governo inglese",
+            opzioni: [
+              "è una forma di governo parlamentare",
+              "è una forma di governo presidenziale",
+              "è una forma di governo direttoriale",
+              "è una forma di governo semi-presidenziale"
+            ],
+            corretta: 0
+          },
+          {
+            id: "intermedia 2",
+            domanda: "L'umanesimo giuridico",
+            opzioni: [
+              "è un movimento dottrinale nato in USA nel X secolo, come diretta emanazione della cultura medievale",
+              "si definisce come un'esperienza giuridica basata sulla pluralità delle fonti e sull'assenza di un potere politico centrale monopolizzatore del diritto, come lo Stato moderno",
+              "è un movimento dottrinale nato in Italia nel XV secolo, come diretta emanazione della cultura rinascimentale, che ha rivoluzionato il modo di studiare il diritto romano. A differenza dei giuristi medievali, che consideravano il Corpus Iuris Civilis come una verità dogmatica e senza tempo, gli umanisti lo trattarono come un prodotto storico da analizzare criticamente",
+              "è un movimento dottrinale nato in Russia nel XX secolo, come diretta emanazione della cultura marxista"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 3",
+            domanda: "Quale è l'idea rivoluzionaria introdotta dal Giusnaturalismo che scardina la visione medievale del potere e pone le basi per lo Stato moderno?",
+            opzioni: [
+              "L'idea che il potere del sovrano sia assoluto e indiscutibile perché deriva direttamente da un'investitura divina che non ammette limiti.",
+              "L'esistenza di \"diritti naturali\" (come la vita e la libertà) che ogni individuo possiede per nascita e che lo Stato ha il dovere di proteggere attraverso un \"contratto sociale\"",
+              "La convinzione che la legge debba essere tramandata solo oralmente dai giudici per evitare che il popolo possa interpretarla in modo errato.",
+              "La tesi secondo cui il diritto di proprietà appartenga solo allo Stato e che i cittadini siano semplici usufruttuari dei beni concessi dal sovrano."
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 4",
+            domanda: "il diritto romano",
+            opzioni: [
+              "rappresenta l'insieme delle norme che hanno retto la res publica romana fino alla morte dell'imperatore Giustiniano (565 d.C.).",
+              "rappresenta l'insieme delle norme che hanno retto l'impero romano fino alla morte dell'imperatore Giustiniano (565 d.C.).",
+              "rappresenta l'insieme delle norme che hanno retto la monarchia di Romana fino alla morte di Tarquinio il Superbo.",
+              "rappresenta l'insieme delle norme che hanno retto la comunità romana per oltre mille anni, dalla fondazione di Roma (753 a.C.) fino alla morte dell'imperatore Giustiniano (565 d.C.). È considerato il fondamento degli ordinamenti giuridici moderni, in particolare di quelli di \"civil law\""
+            ],
+            corretta: 3
+          },
+          {
+            id: "intermedia 5",
+            domanda: "In quale opera del 1748 Montesquieu teorizza la tripartizione dei poteri?",
+            opzioni: [
+              "Dei delitti e delle pene",
+              "Lo spirito delle leggi",
+              "Il contratto sociale",
+              "Il Dizionario filosofico"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 6",
+            domanda: "Lo Stato di diritto",
+            opzioni: [
+              "È la forma di stato che si afferma in epoca medievale e caratterizzato dal potere assoluto del Papa",
+              "È la forma di stato che si afferma con l'umanesimo giuridico ed è basato su una visione antropocentrica e sull'idea della intangibilità della dignità dell'uomo",
+              "È la forma di stato che si afferma con la rivoluzione francese ed è basato sul rispetto del principio di legalità e del principio di separazione dei poteri",
+              "È la forma di stato che si afferma con la rivoluzione inglese ed è basata sul rispetto del principio teocratico"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 7",
+            domanda: "Che cos'è lo \"Ius Commune\" (Diritto Comune) nel sistema medievale?",
+            opzioni: [
+              "Una legge emanata da un unico Re per tutta Europa",
+              "Un sistema sussidiario composto da Diritto Romano e Diritto Canonico",
+              "Il diritto esclusivo delle corporazioni mercantili",
+              "Un codice civile moderno, scritto in lingua volgare"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 8",
+            domanda: "In che modo il Codice Napoleone del 1804 definì il diritto di proprietà privata e quale fu l'impatto di questa scelta sul sistema giuridico moderno?",
+            opzioni: [
+              "La proprietà rimase legata ai titoli nobiliari di nascita, stabilendo che solo chi apparteneva all'antica aristocrazia poteva possedere terre in modo perpetuo.",
+              "La proprietà venne considerata un bene comune gestito dallo Stato, che aveva il dovere di ridistribuirla periodicamente per assistere i poveri.",
+              "Il Codice stabilì che la proprietà privata fosse subordinata all'approvazione della Chiesa, mantenendo l'obbligo delle decime sui terreni agricoli.",
+              "La proprietà privata da scomposta divenne unita e fu elevata a cardine della società civile, garantendo al proprietario il diritto di godere dei propri beni in modo assoluto, purché non se ne facesse un uso vietato dalle leggi."
+            ],
+            corretta: 3
+          },
+          {
+            id: "intermedia 9",
+            domanda: "Per Beccaria, qual è la funzione principale della pena?",
+            opzioni: [
+              "Tormento corporale per estorcere confessioni",
+              "Vendetta privata del danneggiato",
+              "Prevenzione e recupero, non vendetta",
+              "Spettacolo di sangue per spaventare i sudditi"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 10",
+            domanda: "Lo stato assoluto",
+            opzioni: [
+              "è la seconda forma di Stato moderno, affermatasi in Europa tra il XVI e il XVIII secolo, caratterizzata dalla separazione dei poteri (legislativo, esecutivo, giudiziario)",
+              "è la prima forma di Stato moderno, affermatasi in Europa tra il XVI e il XVIII secolo, caratterizzata dalla concentrazione di tutti i poteri (legislativo, esecutivo, giudiziario) nelle mani del sovrano o della Corona. Il monarca, legibus solutus (sciolto dalle leggi), esercita un potere illimitato e di origine divina, sostenuto da una burocrazia e un esercito permanenti",
+              "è la prima forma di Stato moderno, affermatasi in Europa nel XX secolo, caratterizzata dalla concentrazione di tutti i poteri (legislativo, esecutivo, giudiziario) nelle mani del parlamento",
+              "è la prima forma di Stato moderno, affermatasi in Europa tra il X e il XIII secolo, caratterizzata dalla concentrazione di tutti i poteri (legislativo, esecutivo, giudiziario) nelle mani dell'Imperatore in contrapposizione al potere papale"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 11",
+            domanda: "Qual è la critica principale che l'Umanesimo muove ai giuristi medievali?",
+            opzioni: [
+              "Di aver ignorato il diritto canonico",
+              "Di aver studiato troppo la lingua greca",
+              "Di aver interpretato il diritto romano in modo acritico e senza rigore filologico",
+              "Di aver concesso troppe libertà ai mercanti"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 12",
+            domanda: "la nascita del costituzionalismo moderno",
+            opzioni: [
+              "si colloca tra la fine del XII e il XIII secolo, identificandosi con il superamento delle forme giuridiche dell'alto medio evo caratterizzate dall'affermazione dello Stato moderno",
+              "si colloca tra la fine del XIV e il XV secolo, identificandosi con il superamento delle forme giuridiche del basso medio evo e con l'affermazione dello stato moderno",
+              "si colloca tra la fine del XVII e il XVIII secolo, identificandosi con il superamento dello stato monarchico assoluto a favore di un sistema basato sulla limitazione del potere e sulla garanzia dei diritti individuali",
+              "si colloca tra la fine del XIX e il XX secolo, identificandosi con il superamento delle forme giuridiche della rivoluzione francese"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 13",
+            domanda: "la monarchia costituzionale",
+            opzioni: [
+              "è una forma di Stato in cui i poteri del monarca (che è Capo dello Stato) sono assoluti e i decreti del re prevalgono sulle leggi approvate dal parlamento.",
+              "è una forma di Stato in cui i poteri del sovrano (che è Capo dello Stato) sono limitati da una costituzione (che può essere scritta o non scritta) e da leggi approvate dal parlamento.",
+              "è una forma di Stato in cui i poteri del monarca (che non è Capo dello Stato) sono molto ristretti in quanto subordinati agli atti del Presidente della repubblica.",
+              "è una forma di Stato in cui i poteri del monarca (che è capo dello Stato) prevalgono su ogni altra fonte del diritto e su ogni altro atto"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 14",
+            domanda: "Quale fu la principale differenza tra la Costituzione del 1793 e il Codice Napoleone del 1804?",
+            opzioni: [
+              "La Costituzione del 1793 rimase un'utopia mai applicata a causa dello stato di emergenza, mentre il Codice Napoleone divenne una realtà concreta che garantì la certezza del diritto e l'uguaglianza formale.",
+              "La Costituzione del 1793 puntava alla protezione della proprietà privata come cardine della società, mentre il Codice Napoleone introduceva il diritto all'assistenza per i poveri.",
+              "Il Codice Napoleone ripristinò i tribunali speciali per i nobili e il clero, annullando il principio di uguaglianza della Costituzione del 1793.",
+              "La Costituzione del 1793 istituì il suffragio censitario riservato ai ricchi, mentre Napoleone estese il voto a tutti i cittadini maschi."
+            ],
+            corretta: 0
+          },
+          {
+            id: "intermedia 15",
+            domanda: "Cosa si intende per \"Utrumque Ius\"?",
+            opzioni: [
+              "L'unione tra potere legislativo ed esecutivo",
+              "Il sistema dei \"due diritti\": Romano e Canonico",
+              "Il conflitto tra nobiltà e terzo stato",
+              "La separazione tra Stato e Chiesa"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 16",
+            domanda: "Quale mutamento avviene nel diritto di famiglia con la fine dell'Antico Regime e l'applicazione del droit intermédiaire?",
+            opzioni: [
+              "Il matrimonio resta un sacramento esclusivamente religioso",
+              "ha introdotto l'equiparazione tra i figli cc.dd. legittimi e naturali in ambito successorio, abolendo i privilegi legati all'ordine di nascita e al sesso",
+              "Ci stabilisce che solo il primogenito maschio può ereditare",
+              "Una truffa legata alla vendita di terreni agricoli"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 17",
+            domanda: "Quale fu il contributo principale di Cesare Beccaria al diritto penale moderno?",
+            opzioni: [
+              "L'introduzione della tortura nei processi",
+              "L'idea che la pena debba essere una vendetta pubblica",
+              "L'affermazione che la pena deve essere utile, certa e proporzionata",
+              "La giustificazione della pena di morte come diritto dello Stato"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 18",
+            domanda: "Il diritto dell'età moderna",
+            opzioni: [
+              "È quello che si registra in Europa dalla caduta dell'Impero Romano fino al 1300",
+              "è il diritto vigente in Europa dalla metà del XV secolo, fino alla Rivoluzione francese.",
+              "è il diritto vigente in Nord America dalla metà del XV secolo, fino alla Rivoluzione francese.",
+              "è il diritto vigente in Europa dalla metà del XX sec fino alla rivoluzione russa"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 19",
+            domanda: "Cosa rappresenta la \"Legge\" nell'ottica dell'Illuminismo giuridico?",
+            opzioni: [
+              "Un dogma religioso indiscutibile",
+              "Un insieme di consuetudini tramandate oralmente",
+              "Uno strumento razionale, chiaro e uguale per tutti",
+              "Il volere arbitrario del sovrano assoluto"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 20",
+            domanda: "Secondo la prospettiva giusnaturalista di Thomas Hobbes perché gli uomini decidono di stipulare un \"contratto sociale\" e sottomettersi a un potere assoluto?",
+            opzioni: [
+              "Per uscire dallo \"stato di natura\", una condizione di guerra di tutti contro tutti (homo homini lupus) e garantire la propria sopravvivenza attraverso l'ordine e la pace.",
+              "Per puro spirito di fratellanza e amore verso il prossimo, cercando di costruire una società basata sulla condivisione dei beni.",
+              "Per obbedire a un comando divino che impone a ogni popolo di avere un Re come guida morale e religiosa.",
+              "Per preservare i privilegi feudali della nobiltà e impedire al Terzo Stato di partecipare alla vita politica."
+            ],
+            corretta: 0
+          },
+          {
+            id: "intermedia 21",
+            domanda: "Lo Stato moderno",
+            opzioni: [
+              "è una forma di organizzazione politica nata in Europa tra il X e il XII secolo, caratterizzata dall'accentramento del potere nelle mani del Papa, che lo esercita su un territorio definito, mediante un apparato burocratico-amministrativo, un esercito permanente e un sistema fiscale unificato.",
+              "è una forma di organizzazione politica nata in Europa tra il XII e il XI secolo, caratterizzata dall'accentramento del potere nelle mani dell'Imperatore del Sacro Romano Impero, che lo esercita su un territorio definito, mediante un apparato burocratico-amministrativo, un esercito permanente e un sistema fiscale unificato.",
+              "è una forma di organizzazione politica nata in Europa tra il XV e il XVII secolo, caratterizzata dall'accentramento del potere nelle mani del sovrano, che lo esercita su un territorio definito, mediante un apparato burocratico-amministrativo, un esercito permanente e un sistema fiscale unificato. Questo processo, evolutosi dalla crisi del feudalesimo, ha visto le monarchie nazionali (Francia, Inghilterra, Spagna) imporre la propria sovranità, sostituendo i poteri frammentati medievali con un'autorità centrale, spesso assolutista",
+              "è una forma di organizzazione politica nata in Europa tra il XIX e il XX secolo, caratterizzata dall'accentramento del potere nelle mani del sovrano, che lo esercita in accordo con il Parlamento (monarchia costituzionale)"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 22",
+            domanda: "Perché la \"filologia\" è importante per l'Umanesimo giuridico?",
+            opzioni: [
+              "Per studiare meglio le lingue orientali",
+              "Per ricostruire il vero significato dei testi classici eliminando gli errori medievali",
+              "Per inventare nuovi termini giuridici complessi",
+              "Per tradurre il Codice Civile in francese"
+            ],
+            corretta: 1
+          },
+          {
+            id: "intermedia 23",
+            domanda: "Secondo l'Umanesimo giuridico, il Corpus Iuris Civilis di Giustiniano è:",
+            opzioni: [
+              "Un testo sacro e immutabile caduto dal cielo",
+              "Una verità divina valida per sempre",
+              "Un prodotto storico degno di ammirazione che però appartiene a un mondo passato",
+              "L'unica fonte del diritto applicabile nel XV secolo"
+            ],
+            corretta: 2
+          },
+          {
+            id: "intermedia 24",
+            domanda: "Secondo il pensiero di Montesquieu, perché i poteri devono essere separati?",
+            opzioni: [
+              "Per rendere i processi più lunghi e costosi",
+              "Per dare più importanza al Re rispetto al Parlamento",
+              "Per favorire la nobiltà di toga rispetto a quella di spada",
+              "Perché chi detiene il potere è portato ad abusarne, finché non trova limiti"
+            ],
+            corretta: 3
+          },
+          {
+            id: "intermedia 25",
+            domanda: "Cosa simboleggia l'espressione \"uscire dal labirinto\" riferita all'Illuminismo?",
+            opzioni: [
+              "La costruzione di carceri più sicure",
+              "La scoperta di nuove rotte commerciali verso le Americhe",
+              "La fine delle guerre di religione in Europa",
+              "Il superamento della confusione del sistema giuridico del diritto comune, attraverso l'uso della ragione"
+            ],
+            corretta: 3
+          },
+          {
+            id: "intermedia 26",
+            domanda: "La rivoluzione inglese",
+            opzioni: [
+              "è all'origine dei moderni sistemi parlamentari in quanto consacra il principio della centralità del parlamento ed introduce il modello dello stato di diritto, poi teorizzato da Montesquieau, caratterizzato dalla vigenza del principio di separazione dei poteri e del principio di legalità",
+              "è all'origine dei moderni sistemi parlamentari in quanto consacra il principio della centralità del governo ed introduce il modello dello stato assoluto, caratterizzato dalla prevalenza del potere del monarca sul governo",
+              "è all'origine dei moderni sistemi parlamentari in quanto consacra il principio della centralità del monarca ed introduce il modello dello stato assoluto, caratterizzato dalla onnipotenza del re",
+              "è all'origine dei moderni sistemi parlamentari in quanto consacra il principio della centralità del potere giudiziario"
+            ],
+            corretta: 0
+          },
+          {
+            id: "intermedia 27",
+            domanda: "In che modo l'Umanesimo influenza il diritto contrattuale?",
+            opzioni: [
+              "Introducendo l'obbligo di testimoni nobili",
+              "Vietando ogni forma di commercio con l'estero",
+              "Rendendo ogni contratto nullo se non scritto in latino",
+              "Ponendo al centro la \"volontà del singolo\" come fonte dell'accordo"
+            ],
+            corretta: 3
+          },
+          {
+            id: "intermedia 28",
+            domanda: "Con l'espressione \"common law\" si fa riferimento ad un modello di ordinamento giuridico",
+            opzioni: [
+              "di origine britannica, in cui il diritto è prodotto anche dal giudice, che si basa sui precedenti giurisprudenziali, i quali si armonizzano con le leggi approvate dal Parlamento e con gli atti normativi approvati dal governo",
+              "di origine tedesca, basato esclusivamente su una rigida concezione del principio di legalità che a sua volta è soddisfatto dalle leggi approvate dal parlamento",
+              "di origine britannica, basato sulla esistenza di una sola fonte del diritto, rappresentata dalla legge parlamentare",
+              "di origine britannica, basato sulla prevalenza degli atti normativi del governo sulla legge parlamentare"
+            ],
+            corretta: 0
+          },
+          {
+            id: "intermedia 29",
+            domanda: "il diritto inglese",
+            opzioni: [
+              "rappresenta il modello originario del sistema di common law, distinguendosi nettamente dai sistemi di civil law per la sua natura prevalentemente giurisprudenziale anziché codificata",
+              "è diretta espressione del diritto romano e si identifica con i sistemi di civil law (come quello italiano) per la sua natura prevalentemente codificata",
+              "è diretta espressione del diritto sassone e si identifica con i sistemi di civil law (come quello italiano) per la sua natura prevalentemente codificata",
+              "è diretta espressione del diritto romano e si differenzia dai sistemi di civil law (come quello italiano) per la sua natura prevalentemente codificata"
+            ],
+            corretta: 0
+          },
+          {
+            id: "intermedia 30",
+            domanda: "In che modo il Codice Napoleone disciplinò i rapporti familiari?",
+            opzioni: [
+              "Trasformò la famiglia in una struttura democratica dove moglie e marito avevano identici poteri di gestione del patrimonio e dei figli.",
+              "Abolì completamente l'istituto del matrimonio civile, riportando la competenza esclusiva dei registri di nascita e di nozze alle parrocchie.",
+              "Concepì la famiglia come una \"piccola monarchia\" in cui il marito era il sovrano e la moglie e i figli erano i sudditi, al fine di garantire la stabilità dello Stato.",
+              "Introdusse il diritto universale dei figli primogeniti a ereditare l'intero patrimonio, eliminando l'uguaglianza dei figli nell'eredità"
+            ],
+            corretta: 2
+          } ,
+
+          {
+            id: 1,
+            domanda: "Nella Costituzione italiana, il dovere tributario:",
+            opzioni: [
+              "E' espressamente previsto nell'art. 53 della Costituzione",
+              "Non è espressamente previsto ma si deduce in via interpretativa dall'art. 53 della Costituzione",
+              "Non è espressamente previsto ma si deduce in via interpretativa dall'art. 2 della Costituzione",
+              "Non è espressamente previsto ma si deduce in via interpretativa dall'art. 3 della Costituzione"
+            ],
+            corretta: 0
+          },
+          {
+            id: 2,
+            domanda: "Nel medioevo la proprietà divisa era formata da:",
+            opzioni: [
+              "Proprietà piena ed enfiteusi",
+              "Proprietà piena ed usi civici",
+              "Dominio diretto e dominio utile",
+              "Dominio reale e dominio personale"
+            ],
+            corretta: 2
+          },
+          {
+            id: 3,
+            domanda: "Il giusnaturalismo:",
+            opzioni: [
+              "Comporta che il diritto sia ispirato a valori razionali",
+              "Richiede che la norma sia strettamente legata alla storia dei singoli popoli europei",
+              "Vuole un ritorno al diritto romano classico",
+              "Teorizza l'assoluta libertà dei giudici di disapplicare la legge"
+            ],
+            corretta: 0
+          },
+          {
+            id: 4,
+            domanda: "Portalis é:",
+            opzioni: [
+              "Il principale collaboratore del Re Sole",
+              "Il giurista francese di Orleans autore della tipizzazione dei contratti",
+              "II redattore della costituzione della Terza Repubblica francese",
+              "Il principale autore del code civil del 1804"
+            ],
+            corretta: 3
+          },
+          {
+            id: 5,
+            domanda: "La Repubblica napoletana del 1799 è stata:",
+            opzioni: [
+              "Una repubblica voluta dal papa ed ispirata ai valori cattolici",
+              "Una repubblica laica, illuminista ed aristocratica",
+              "Una repubblica voluta dagli austriaci",
+              "Una repubblica voluta da Nelson e dagli inglesi"
+            ],
+            corretta: 1
+          },
+          {
+            id: 6,
+            domanda: "II codice civile italiano del 1865 é:",
+            opzioni: [
+              "Un codice ispirato dalla pandettistica",
+              "Un codice basato sulla tradizione giuridica napoletana",
+              "Una sostanziale traduzione del code civil francese",
+              "Una fusione tra il codice civile francese e quello tedesco"
+            ],
+            corretta: 2
+          },
+          {
+            id: 7,
+            domanda: "La IV Sezione del Consiglio di stato:",
+            opzioni: [
+              "Viene creata per dare tutela agli interessi legittimi",
+              "Ha lo scopo di fornire solo consulenza al Governo",
+              "Ha lo scopo di regolare l'economia di guerra durante la prima guerra mondiale",
+              "Ha lo scopo di regolare i conflitti di giurisdizione tra Consiglio di stato e Cassazione"
+            ],
+            corretta: 0
+          },
+          {
+            id: 8,
+            domanda: "La responsabilità extracontrattuale:",
+            opzioni: [
+              "Negli anni novanta del Novecento è stata affidata al Giudice amministrativo",
+              "E' limitata esclusivamente alla disciplina degli incidenti stradali",
+              "Si afferma a seguito dell'ampliamento della tutela del cosiddetto danno ingiusto",
+              "E' ormai totalmente sostituita dalla tutela del consumatore"
+            ],
+            corretta: 2
+          },
+          {
+            id: 9,
+            domanda: "La Scuola storica di Savigny:",
+            opzioni: [
+              "Propugna un metodo interpretativo basato sulla lettera della legge",
+              "Propugna un metodo di interpretazione fondato sui principi generali dell'interpretazione come prospettati nei primi articoli del codice civile",
+              "Propugna un metodo di interpretazione fondato sulla volontà del legislatore",
+              "Propugna un metodo di interpretazione e di analisi del diritto fondato su un metodo sistematico basato su concetti e teorie generali risalenti al diritto romano e come storicamente venutesi a concretizzare nella storia di un popolo"
+            ],
+            corretta: 3
+          },
+          {
+            id: 10,
+            domanda: "Secondo la giurisprudenza dei concetti:",
+            opzioni: [
+              "L'interpretazione giuridica deve essere basata mediante la riconduzione delle leggi e degli istituti giuridici in concetti generali, ai quali l'interprete deve rifarsi prescindendo dalla considerazione di qualsiasi elemento estraneo al diritto",
+              "L'interpretazione giuridica deve essere basata su elementi estranei al testo della legge",
+              "L'interpretazione giuridica deve essere basata solo sul testo della singola disposizione legislativa",
+              "L'interpretazione giuridica è sempre libera"
+            ],
+            corretta: 0
+          },
+          {
+            id: 11,
+            domanda: "Secondo la giurisprudenza degli interessi:",
+            opzioni: [
+              "La scienza del diritto deve tutelare gli interessi del gruppo sociale storicamente prevalente",
+              "La scienza del diritto deve ricercare gli interessi (gli scopi) che costituiscono il principio fondatore del diritto (e dunque gli interessi che le norme sono chiamate a tutelare)",
+              "La scienza del diritto non deve ricercare gli interessi (gli scopi) che costituiscono il principio fondatore del diritto",
+              "La scienza del diritto non deve interrogarsi sugli interessi (gli scopi) che le norme sono chiamate a tutelare"
+            ],
+            corretta: 1
+          },
+          {
+            id: 12,
+            domanda: "Secondo Kelsen:",
+            opzioni: [
+              "Il sistema delle fonti del diritto è la risultante delle leggi approvate dal parlamento",
+              "L'interpretazione della legge spetta al solo Parlamento",
+              "Il sistema delle fonti del diritto è costruito secondo un principio gerarchico che vede al fondamento la Grundnorm (norma fondamentale)",
+              "Nessuna delle risposte precedenti è esatta"
+            ],
+            corretta: 2
+          },
+          {
+            id: 13,
+            domanda: "Il codice civile tedesco (Burgerliches Gesetzbuch) è entrato in vigore il:",
+            opzioni: [
+              "1° gennaio 1800",
+              "1° gennaio 1804",
+              "1° gennaio 1862",
+              "1° gennaio 1900"
+            ],
+            corretta: 3
+          },
+          {
+            id: 14,
+            domanda: "Con l'espressione common law si fa riferimento a:",
+            opzioni: [
+              "Un modello di ordinamento giuridico, di origine britannica, basato sui precedenti giurisprudenziali, più che sulle leggi e sugli atti normativi approvati da organi politici",
+              "Un modello di ordinamento giuridico, di origine tedesca, basato esclusivamente sulle leggi approvate dal parlamento",
+              "Un modello di ordinamento giuridico, di origine italiana, basato su teorie generali di fondamento filosofico",
+              "Un modello di ordinamento giuridico, di origine francese, basato sui precedenti normativi medievali"
+            ],
+            corretta: 0
+          },
+          {
+            id: 15,
+            domanda: "Con l'espressione post-modernismo in campo giuridico si indica:",
+            opzioni: [
+              "Un corrente filosofica fondata su principi razionalistici per cui in un testo normativo l'interpretazione può essere solo una corretta",
+              "Un corrente filosofica per cui in un testo normativo non si distinguono interpretazioni corrette da errate, giacché ogni testo è suscettibile di infinite interpretazioni",
+              "Un corrente filosofica per cui tutti i testi normativi debbono essere suscettibili di una sola interpretazione",
+              "Un corrente filosofica avente come obiettivo dimostrare la superiorità del pensiero positivistico"
+            ],
+            corretta: 1
+          },
+          {
+            id: 16,
+            domanda: "Secondo la giurisprudenza della Corte costituzionale, la capacità contributiva:",
+            opzioni: [
+              "Consiste nel principio dell'uniformità o dell'eguaglianza tributaria ed anche come criterio per sindacare qualunque scelta fatta dal legislatore.",
+              "Si pone come principio dell'uniformità ma non come criterio per sindacare le scelte fatte dal legislatore.",
+              "Si afferma come principio dell'uniformità (a situazioni diverse, diverso trattamento) ma anche come criterio per sindacare la scelta, fatta dal legislatore, sia dei fatti generatori di imposta che dei criteri di determinazione della base imponibile",
+              "Si afferma come principio dell'uniformità intesa nel senso che debbono effettuarsi prelievi diversi in identiche situazioni"
+            ],
+            corretta: 2
+          },
+          {
+            id: 17,
+            domanda: "La compilazione di Giustiniano (Corpus luris civilis) è composto da:",
+            opzioni: [
+              "1) Istituzioni, 2) Digesto o Pandette, 3) Novelle",
+              "1) Codice, 2) Istituzioni, 3) Digesto, 4) Pandette",
+              "1) Istituzioni, 2) Digesto o Pandette, 3) Codice, 4) Novelle",
+              "Non è mai esistita"
+            ],
+            corretta: 2
+          },
+          {
+            id: 18,
+            domanda: "L'ordine giuridico medievale è caratterizzato:",
+            opzioni: [
+              "Dalla sovranità dello Stato",
+              "Dal pluralismo dei centri di potere",
+              "Dalla presenza di un monarca assoluto",
+              "Nessuna delle risposte precedenti"
+            ],
+            corretta: 1
+          },
+          {
+            id: 19,
+            domanda: "Il diritto naturale è:",
+            opzioni: [
+              "Un insieme di norme non scritte che riguardano la natura",
+              "Il complesso di norme non scritte, considerate universali e necessarie, preesistenti e non sempre coincidenti col diritto positivo",
+              "Un insieme di norme scritte ed effettivamente operanti in materia di diritto ambientale",
+              "Un insieme di norme scritte approvate dal parlamento"
+            ],
+            corretta: 1
+          },
+          {
+            id: 20,
+            domanda: "La Carta Costituzionale italiana è entrata in vigore:",
+            opzioni: [
+              "Il 1° gennaio 1958",
+              "Il 1° gennaio 1948",
+              "II 21 aprile 1942",
+              "Il 21 marzo 1804"
+            ],
+            corretta: 1
+          },
+          {
+            id: 21,
+            domanda: "Quale processo storico-giuridico ha contribuito alla fine dell'esperienza del Diritto Comune?",
+            opzioni: [
+              "La lex mercatoria",
+              "L'attività di interpretazione della giurisprudenza europea",
+              "La codificazione",
+              "L'invasione delle popolazioni barbariche"
+            ],
+            corretta: 2
+          },
+          {
+            id: 22,
+            domanda: "L'elemento soggettivo dell'istituto feudale si identifica:",
+            opzioni: [
+              "Nel beneficium",
+              "Nell'immunitas",
+              "Nella opinio iuris",
+              "Nel vassaticum, ovvero nel mutuo rapporto di fedeltà e protezione"
+            ],
+            corretta: 3
+          },
+          {
+            id: 23,
+            domanda: "Per i Glossatori il corpus iuris conteneva:",
+            opzioni: [
+              "Un diritto universale valido ab aeterno e per aeternum",
+              "Un insieme di istituti giuridici superati e attuabili solo in parte",
+              "Un diritto raffinato ma non più attuale",
+              "Un diritto obsoleto"
+            ],
+            corretta: 0
+          },
+          {
+            id: 24,
+            domanda: "L'umanesimo giuridico:",
+            opzioni: [
+              "Nacque nei paesi anglosassoni",
+              "Nacque in Francia ma si sviluppò in Italia",
+              "Nacque in Italia ma si sviluppò in Francia",
+              "Nacque in Francia"
+            ],
+            corretta: 2
+          },
+          {
+            id: 25,
+            domanda: "L'ordine giuridico medievale fu caratterizzato:",
+            opzioni: [
+              "Dalla produzione normativa da parte del sovrano",
+              "Dalla consuetudine come fonte normativa ordinante e sovraordinata",
+              "Dall'elaborazione scientifica del diritto",
+              "Dall'elaborazione dottrinale del diritto"
+            ],
+            corretta: 1
+          },
+          {
+            id: 26,
+            domanda: "Come si definisce il metodo di commento irneriano al corpus iuris:",
+            opzioni: [
+              "Glossa",
+              "Commento",
+              "Tractatus",
+              "Quaestio"
+            ],
+            corretta: 0
+          },
+          {
+            id: 27,
+            domanda: "I glossatori ebbero nei confronti del corpus iuris un atteggiamento:",
+            opzioni: [
+              "Fortemente critico",
+              "Fideistico",
+              "Scettico",
+              "Parzialmente negativo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 28,
+            domanda: "Con il termine \"bartolismo\" si indicano:",
+            opzioni: [
+              "Gli appartenenti alla scuola esegetica francese",
+              "Gli appartenenti alla scuola Culta",
+              "Gli appartenenti alla scuola della Glossa",
+              "Gli appartenenti alla scuola del Commento"
+            ],
+            corretta: 3
+          },
+          {
+            id: 29,
+            domanda: "II writ of right:",
+            opzioni: [
+              "Stava a designare i diritti di godimento in Inghilterra",
+              "Era uno dei rimedi contro l'inadempimento contrattuale",
+              "Nell'ambito della common law era un ordine del Re, scritto in latino dal Cancelliere, per adire la Corte",
+              "Era l'insieme di regole basate sull'equità del Cancelliere"
+            ],
+            corretta: 2
+          },
+          {
+            id: 30,
+            domanda: "L'Umanesimo Giuridico è:",
+            opzioni: [
+              "Un metodo di studio fondato da Irnerio",
+              "Un movimento sviluppatosi tra XIII e XIV secolo per cogliere il senso tramite il commento",
+              "Una teoria filosofica basata sul diritto naturale",
+              "L'indirizzo dottrinario del secolo XV caratterizzato dallo studio filologico dei testi giuridici"
+            ],
+            corretta: 3
+          },
+          {
+            id: 31,
+            domanda: "Su cosa si basa l'analisi strutturalista del code civil proposta da Arnaud?",
+            opzioni: [
+              "Analisi dei collegamenti tra la società borghese come espressione di un ordine giuridico sociale",
+              "Centralità del negozio giuridico",
+              "Rapporti tra classi sociali",
+              "Tipologie diverse di responsabilità"
+            ],
+            corretta: 0
+          },
+          {
+            id: 32,
+            domanda: "Cosa si intende con la parola decodificazione riferita al Codice Civile?",
+            opzioni: [
+              "Che ha subito un continuo processo di unificazione",
+              "Che si è svuotato di contenuti normativi",
+              "Che è stato sostituito con un testo più aggiornato",
+              "Che non è più al centro dell'universo giuridico del civilista"
+            ],
+            corretta: 3
+          },
+          {
+            id: 33,
+            domanda: "La Chiesa Cattolica ha sostenuto per lungo tempo una concezione dell'animale:",
+            opzioni: [
+              "Come portatore di interessi propri",
+              "Come titolare di diritti",
+              "Strumentale rispetto all'uomo",
+              "Come destinatario di doveri"
+            ],
+            corretta: 2
+          },
+          {
+            id: 34,
+            domanda: "Quali sono i principali filoni su cui si fonda la struttura del Codice Civile italiano del 1942?",
+            opzioni: [
+              "Successioni e obbligazioni",
+              "Proprietà, impresa e lavoro",
+              "Proprietà e famiglia",
+              "Lavoro e funzione sociale della proprietà"
+            ],
+            corretta: 1
+          },
+          {
+            id: 35,
+            domanda: "Il mos gallicus considerò il diritto comune/romano:",
+            opzioni: [
+              "Come vero e proprio diritto vivente",
+              "Come un complesso di norme finalizzato alle esercitazioni forensi",
+              "Come oggetto di studio con approccio prettamente filologico e storicistico",
+              "In modo fideistico come fonte normativa per antonomasia"
+            ],
+            corretta: 2
+          },
+          {
+            id: 36,
+            domanda: "La conditio, quale tipico esempio di logica giuridica romana, è:",
+            opzioni: [
+              "Un elemento accidentale del negozio giuridico, consistente in un evento futuro ed incerto",
+              "Un elemento accidentale apposto agli atti di liberalità",
+              "Un elemento essenziale del negozio giuridico",
+              "Un elemento accidentale consistente in un evento futuro e certo"
+            ],
+            corretta: 0
+          },
+          {
+            id: 37,
+            domanda: "La littera bononiensis è:",
+            opzioni: [
+              "Un'opera didattica in 4 libri",
+              "Il manoscritto delle Pandette di Giustiniano studiato dalla Scuola Bolognese",
+              "La parte del Corpus in cui sono raccolte le costituzioni imperiali",
+              "Il manoscritto delle Pandette ritenuto più attendibile nell'umanesimo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 38,
+            domanda: "Quali sono state le conseguenze dell'introduzione del principio di responsabilità oggettiva?",
+            opzioni: [
+              "Un rallentamento dello sviluppo socio economico",
+              "La possibilità di risarcimento solo per danno ingiusto",
+              "Nessun impatto sullo sviluppo industriale",
+              "Il superamento del principio \"nessuna responsabilità senza colpa\" inadatto alla società industriale"
+            ],
+            corretta: 3
+          },
+          {
+            id: 39,
+            domanda: "La proprietà nell'Età di Mezzo si definisce \"scomposta\" perché:",
+            opzioni: [
+              "E' concepita come diritto individuale assoluto",
+              "Affianca alla dimensione individualistica la funzione sociale",
+              "Riconosce la scomposizione della tutela in quattro azioni",
+              "La concezione romanistica si scompone in \"dominio utile\" e \"dominio diretto\""
+            ],
+            corretta: 3
+          },
+          {
+            id: 40,
+            domanda: "Lo studio e l'applicazione del Codice Napoleonico sono legati ad una particolare scuola giuridica, quale?",
+            opzioni: [
+              "Pandettistica",
+              "Storico-sistematica",
+              "Esegetica",
+              "Sociologico-giuridica"
+            ],
+            corretta: 2
+          },
+          {
+            id: 41,
+            domanda: "Cosa è il nichilismo giuridico?",
+            opzioni: [
+              "Una corrente che identifica la norma come portatrice di principi",
+              "Una forma di pessimismo giuridico che identifica la norma nella validità delle fonti di produzione",
+              "Una filosofia che pone la persona al centro",
+              "Un concetto che vede le norme come espressione della volontà umana"
+            ],
+            corretta: 1
+          },
+          {
+            id: 42,
+            domanda: "Cosa prevedeva principalmente la Riforma Vanoni?",
+            opzioni: [
+              "Una dichiarazione unica annuale obbligatoria comprendente tutti i redditi prodotti",
+              "L'abolizione di ogni forma di imposta indiretta",
+              "Una tassazione esclusiva sui redditi di impresa",
+              "L'introduzione del sistema proporzionale per ogni tipologia di reddito"
+            ],
+            corretta: 0
+          },
+          {
+            id: 43,
+            domanda: "Come è definita la fase del cd. \"Miracolo economico\" in base agli studi di settore?",
+            opzioni: [
+              "Un abbondante serbatoio di manodopera, tecnologie collaudate, prezzi costanti delle materie prime, nuove fonti energetiche, crescita esportazioni e basso costo del denaro",
+              "Un periodo di recessione marcata e autarchia",
+              "Una breve parentesi di sviluppo isolato al sud Italia",
+              "L'epoca di stallo della produzione industriale pre-bellica"
+            ],
+            corretta: 0
+          },
+          {
+            id: 44,
+            domanda: "Come si presentava il sistema tributario italiano alla fine della seconda guerra mondiale?",
+            opzioni: [
+              "Confuso ed incomprensibile, l'onere fiscale era concentrato su masse limitate di reddito e vi era un'elevata evasione",
+              "Razionalizzato tramite un Testo Unico organico",
+              "Estremamente semplificato e basato su un'unica aliquota",
+              "Pienamente in linea con i moderni principi di trasparenza europea"
+            ],
+            corretta: 0
+          },
+          {
+            id: 45,
+            domanda: "Al termine della seconda guerra mondiale, le imposte più significative erano:",
+            opzioni: [
+              "L'imposta di registro e di successione, l'imposta sui terreni, l'imposta sui fabbricati, l'imposta di ricchezza mobile, le imposte di consumo, l'imposta comunale di famiglia, l'imposta complementare progressiva e l'imposta generale sull'entrata",
+              "Esclusivamente le accise sui beni di prima necessità e le dogane",
+              "L'imposta sul valore aggiunto (IVA) e l'imposta sulle società (IRES)",
+              "Soltanto le imposte sui consumi locali senza alcuna imposta diretta"
+            ],
+            corretta: 0
+          },
+          {
+            id: 46,
+            domanda: "Quale dibattito o fenomeno caratterizza il '700 in ambito giuridico?",
+            opzioni: [
+              "La contrapposizione fra giuspositivismo e giusnaturalismo",
+              "La nascita della scuola dei glossatori bolognesi",
+              "II consolidamento definitivo del common law in Europa continentale",
+              "La soppressione formale del diritto canonico a livello globale"
+            ],
+            corretta: 0
+          },
+          {
+            id: 47,
+            domanda: "Le corporazioni medievali:",
+            opzioni: [
+              "Rappresentano il potere politico del Comune",
+              "Elaborano la lex mercatoria",
+              "Elaborano il diritto comune",
+              "Rappresentano il Comune di fronte al re"
+            ],
+            corretta: 1
+          },
+          {
+            id: 48,
+            domanda: "La cautio muciana:",
+            opzioni: [
+              "Fu una legge emanata a Roma nel 96 a.C. per limitare la cittadinanza",
+              "Era una clausola nei contratti di locatio rei per esonero dal canone",
+              "Era una cauzione di buona condotta nei processi penali romani",
+              "Era la concessione di un legato sotto condizione risolutiva negativa, con obbligo di restituzione"
+            ],
+            corretta: 3
+          },
+          {
+            id: 49,
+            domanda: "La grande riforma tributaria degli anni '70 introduce, tra le altre:",
+            opzioni: [
+              "IVA, IRPEF, IRPEG e ILOR",
+              "IVA, IRES e ILOR",
+              "IVA, ICI e IRAP",
+              "IRAP e IRES"
+            ],
+            corretta: 0
+          },
+          {
+            id: 50,
+            domanda: "Le fonti dello ius mercatorum medioevale furono:",
+            opzioni: [
+              "II Corpus luris Civilis e la legge del Principe",
+              "Le consuetudini mercantili, la giurisprudenza consolare e gli statuti delle corporazioni e dei comuni",
+              "I pareri dei giuristi universitari e il diritto canonico",
+              "La legge, le costituzioni imperiali e gli statuti rurali"
+            ],
+            corretta: 1
+          },
+          {
+            id: 51,
+            domanda: "Con l'espressione \"diritto comune\" si intende:",
+            opzioni: [
+              "Diritto volgare nato dopo la caduta dell'Impero Romano",
+              "L'ordinamento giuridico dell'Europa continentale dall'XI secolo sino alle codificazioni ottocentesche",
+              "Il diritto degli ordinamenti locali",
+              "Il diritto nato dalla pratica degli affari"
+            ],
+            corretta: 1
+          },
+          {
+            id: 52,
+            domanda: "Cos'è la littera Pisana (di poi littera Florentina)?",
+            opzioni: [
+              "Un manoscritto del Digesto adottato dalla Scuola Bolognese",
+              "Una delle quattro opere del Corpus luris Civilis",
+              "Un testo andato perduto noto come Codex Secundus.",
+              "Un manoscritto del Digesto conservato a Pisa e poi a Firenze, ritenuto autentico dalla Scuola Culta"
+            ],
+            corretta: 3
+          },
+          {
+            id: 53,
+            domanda: "L'ICI:",
+            opzioni: [
+              "E' un'imposta sul patrimonio immobiliare attualmente in vigore",
+              "E' stata istituita negli anni '70",
+              "La base imponibile è il valore dell'immobile, le aliquote deliberate dalle Regioni",
+              "Nessuna delle risposte precedenti è corretta"
+            ],
+            corretta: 3
+          },
+          {
+            id: 54,
+            domanda: "L'abuso del diritto, sulla base della L. 212/2000:",
+            opzioni: [
+              "Consiste nel realizzare benefici in contrasto con le finalità fiscali",
+              "E' inopponibile all'amministrazione finanziaria, legittimata a disconoscere i vantaggi",
+              "Deriva da operazioni prive di sostanza economica per vantaggi indebiti",
+              "Tutte le precedenti risposte sono corrette"
+            ],
+            corretta: 3
+          },
+          {
+            id: 55,
+            domanda: "I giuristi della Scuola dell'Esegesi:",
+            opzioni: [
+              "Furono attenti studiosi della dottrina tedesca",
+              "Concepirono il Code Civil come sistema aperto ed eterointegrabile",
+              "Si rifecero alle cotumes per spiegare il codice del 1804",
+              "Inaugurarono un metodo basato sulla spiegazione letterale e sull'ordine del legislatore"
+            ],
+            corretta: 3
+          },
+          {
+            id: 56,
+            domanda: "L'introduzione dell'amministratore di sostegno:",
+            opzioni: [
+              "E' basata sull'esclusione totale dell'incapace",
+              "Segna il passaggio dalla filosofia dell'escludere a quella del collaborare (solidarietà)",
+              "Prevede lo stesso supporto dell'interdizione",
+              "E' una forma di totale sostituzione nella gestione del patrimonio"
+            ],
+            corretta: 1
+          },
+          {
+            id: 57,
+            domanda: "La riforma del diritto di famiglia:",
+            opzioni: [
+              "E' stata approvata nel 1975 insieme alla cessazione degli effetti del matrimonio",
+              "E' stata approvata nel 1970",
+              "E' stata parzialmente dichiarata incostituzionale nel 1982",
+              "E' oggetto di un regolamento comunitario del 1985"
+            ],
+            corretta: 0
+          },
+          {
+            id: 58,
+            domanda: "Con \"particolarismo giuridico\" in Francia pre-Codice si intende:",
+            opzioni: [
+              "L'esistenza di diverse normative sostanziali e processuali vigenti sul medesimo territorio",
+              "L'applicazione di pene basate sull'ordinamento",
+              "La disciplina legislativa del Sacro Romano Impero",
+              "L'attribuzione di benefici in base all'ordinamento"
+            ],
+            corretta: 0
+          },
+          {
+            id: 59,
+            domanda: "L'IRES:",
+            opzioni: [
+              "Sostituisce l'IRPEG",
+              "E' stata introdotta con il D.Lgs. 344/2003",
+              "Deve essere versata anche dagli enti privati residenti in Italia, inclusi consorzi e trust",
+              "Tutte le precedenti risposte sono corrette"
+            ],
+            corretta: 3
+          },
+          {
+            id: 60,
+            domanda: "La Guardia di Finanza può svolgere compiti di polizia militare (D.Lgs 68/2001)?",
+            opzioni: [
+              "Si, in esclusiva nel proprio ambito.",
+              "No. L'attività è demandata solo ai Carabinieri.",
+              "Si, esercita le funzioni di polizia giudiziaria militare secondo i codici penali militari.",
+              "Nessuna delle precedenti"
+            ],
+            corretta: 0
+          },
+          {
+            id: 61,
+            domanda: "II pensiero neo-liberale ritiene:",
+            opzioni: [
+              "Che sia indispensabile una spinta solidaristica",
+              "Che sia necessaria una regolamentazione del mercato per evitare effetti distorsivi",
+              "Che il mercato e l'iniziativa economica non siano espressione di aspetti giuridici e politici naturali e quindi non modificabili",
+              "Che il diritto debba adeguarsi all'economia regolata da leggi proprie"
+            ],
+            corretta: 2
+          },
+          {
+            id: 62,
+            domanda: "II codice civile francese del 1804:",
+            opzioni: [
+              "Viene scritto dal solo Portalis e approvato da Napoleone",
+              "Contiene al suo interno una parte sul diritto commerciale",
+              "Viene scritto da quattro magistrati",
+              "Viene elaborato nelle Università francesi"
+            ],
+            corretta: 2
+          },
+          {
+            id: 63,
+            domanda: "II diritto agrario italiano:",
+            opzioni: [
+              "Viene elaborato subito dopo la Costituzione",
+              "E' una raccolta di consuetudini del fascismo",
+              "Nasce negli anni venti del Novecento grazie a Giangastone Bolla",
+              "Disciplina i contratti agrari nel Mezzogiorno"
+            ],
+            corretta: 2
+          },
+          {
+            id: 64,
+            domanda: "II Corpus iuris di Giustiniano:",
+            opzioni: [
+              "E' soltanto una consolidazione del diritto già esistente",
+              "E' costituito dalle Pandette",
+              "E' formato da cinque libri",
+              "Nessuna delle risposte precedenti"
+            ],
+            corretta: 0
+          },
+          {
+            id: 65,
+            domanda: "L'utilizzo del precedente al posto della legge:",
+            opzioni: [
+              "E' un principio generale dell'ordinamento europeo",
+              "E' una caratteristica del diritto inglese (common law)",
+              "E' stato vietato dalla Corte costituzionale",
+              "E' possibile solo nel diritto penale"
+            ],
+            corretta: 1
+          },
+          {
+            id: 66,
+            domanda: "L'applicazione del codice di commercio secondo il criterio oggettivo:",
+            opzioni: [
+              "Comportava un sistema binario scelto dai soggetti contrattuali",
+              "Si applicava a tutti i rapporti di chi era iscritto alla matricula mercatorum",
+              "Comportava l'applicazione del diritto commerciale agli atti di commercio in quanto tali, da chiunque posti in essere, anche occasionalmente",
+              "Imponeva di interpretare le norme letteralmente"
+            ],
+            corretta: 2
+          },
+          {
+            id: 67,
+            domanda: "II codice civile italiano del 1942:",
+            opzioni: [
+              "E' stato abrogato dopo l'entrata in vigore della Costituzione",
+              "E' stato abrogato solo relativamente alle disposizioni sulla legge in generale",
+              "Ha subito solo marginali ritocchi dopo l'entrata in vigore della Costituzione",
+              "Dopo la Costituzione non ha subito alcuna modifica"
+            ],
+            corretta: 2
+          },
+          {
+            id: 68,
+            domanda: "La legge sulla cessazione degli effetti civili del matrimonio:",
+            opzioni: [
+              "E' stata approvata nel 1977",
+              "E' una norma di derivazione comunitaria",
+              "Viene temporaneamente abrogata da un referendum nel 1974",
+              "Viene approvata ed entra in vigore nel 1970"
+            ],
+            corretta: 3
+          },
+          {
+            id: 69,
+            domanda: "L'opera scritta da Francois Hotman nel 1573 s'intitolava?",
+            opzioni: [
+              "Francogallia",
+              "Magna Clou",
+              "Les lois civiles dans leur ordine naturel",
+              "Summa Theologica"
+            ],
+            corretta: 0
+          },
+          {
+            id: 70,
+            domanda: "La teoría del patto sociale elaborata da Thomas Hobbes sostiene che:",
+            opzioni: [
+              "All'origine della società civile e dello Stato vi è un patto economico per mezzo del quale gli individui al fine di sottrarsi dalla condizione di natura in cui tutti sono in guerra contro tutti rinunciano parzialmente alla propria libertà per i propri diritti",
+              "Gli uomini volontariamente stipulano un contratto sociale attraverso il quale mantengono le loro volontà individuali e danno vita alla volontà generale ovvero lo Stato che agisce come un solo uomo",
+              "Gli uomini stringono un patto per limitare il potere sovrano.",
+              "La società civile nasce spontaneamente senza alcun patto formale."
+            ],
+            corretta: 0
+          },
+          {
+            id: 71,
+            domanda: "Quale imposta, tra le seguenti, è stata introdotta durante il periodo del Fascismo?",
+            opzioni: [
+              "Imposta di registro",
+              "Tassa sul macinato",
+              "Imposta sul celibato",
+              "Imposta di bollo"
+            ],
+            corretta: 2
+          },
+          {
+            id: 72,
+            domanda: "In quale periodo storico vennero introdotte tassazioni straordinarie per finanziare campagne militari e l'industria di Stato?",
+            opzioni: [
+              "Nell'età giolittiana (1899-1914)",
+              "Nel periodo della Sinistra Storica (1876-1898)",
+              "Nel periodo del Fascismo (1922-1943)",
+              "Durante il conflitto mondiale e nella fase di ripresa post-bellica (1915-1921)"
+            ],
+            corretta: 3
+          },
+          {
+            id: 73,
+            domanda: "Come statuito dall'art. 35 della L. 7 gennaio del 1929 n.4, per assicurarsi dell'adempimento delle prescrizioni imposte dalle leggi o dai regolamenti in materia finanziaria, gli ufficiali o gli agenti della polizia tributaria hanno facoltà di eseguire:",
+            opzioni: [
+              "Accessi, verificazioni e ricerche",
+              "Ispezioni e verificazioni",
+              "Controlli, ispezioni documentali e verificazioni",
+              "Controlli e verificazioni"
+            ],
+            corretta: 0
+          },
+          {
+            id: 74,
+            domanda: "Qual era il punto centrale del c.d. \"Progetto Minghetti\" del 1875?",
+            opzioni: [
+              "Attribuire la qualifica di ufficiali di p.s. ai militari del Corpo",
+              "Trasformare il Corpo in un'organizzazione militare autonoma, dipendente dal Ministero delle Finanze, cambiando la denominazione da Guardie Doganali a Guardia di Finanza",
+              "Smilitarizzare il Corpo della Guardia di Finanza e trasformarlo in una ordinaria forza di polizia",
+              "Aumentare a 60.000 unità la forza organica del Corpo della guardia di Finanza"
+            ],
+            corretta: 1
+          },
+          {
+            id: 75,
+            domanda: "Cosa venne ulteriormente definito con la legge istitutiva della Guardia Doganale emanate nel 1862?",
+            opzioni: [
+              "La normativa forni carattere civile al Corpo organizzato militarmente",
+              "Vennero istituiti e regolamentati i Comandi Regionali e Provinciali del Corpo",
+              "Venne attribuita la qualifica di ufficiali e agenti di polizia tributaria",
+              "Venne attribuita la qualifica di \"polizia del mare\""
+            ],
+            corretta: 1
+          },
+          {
+            id: 76,
+            domanda: "Ai sensi dell'art. 32 della L. 7 gennaio 1929 n.4 gli ufficiali ed agenti della p.g. ordinaria, i quali vengano a notizia di un reato per il cui accertamento la legge designa ufficiali ed agenti della polizia tributaria:",
+            opzioni: [
+              "Debbono avvertire senza indugio tali ufficiali ed agenti e provvedere frattanto a che nulla sia mutato nello stato delle cose",
+              "Devono notiziare immediatamente e senza ritardo il p.m. contabile",
+              "Procedono di iniziativa ad effettuare i rilievi del caso",
+              "Devono documentare e relazionare l'accaduto in un apposito verbale"
+            ],
+            corretta: 0
+          },
+          {
+            id: 77,
+            domanda: "In che anno venne istituita la Legione Truppe Leggere, formazione militare dalla quale ha origine il Corpo della Guardia di Finanza?",
+            opzioni: [
+              "1945",
+              "1874",
+              "1945",
+              "1774"
+            ],
+            corretta: 3
+          },
+          {
+            id: 78,
+            domanda: "II 21 giugno con la Festa del Corpo si commemora:",
+            opzioni: [
+              "La fondazione della Legione Truppe Leggere",
+              "L'istituzione della moderna Guardia di Finanza",
+              "L'eroismo di due battaglioni di finanzieri durante la Battaglia del Solstizio del 1918",
+              "La concessione delle stellette militari"
+            ],
+            corretta: 2
+          },
+          {
+            id: 79,
+            domanda: "L'articolo 31 della Legge 7 gennaio 1929, пг. 4:",
+            opzioni: [
+              "Disciplina le qualifiche di polizia tributaria degli appartenenti al Corpo",
+              "Disciplina la competenza all'accertamento delle violazioni delle disposizioni delle leggi finanziarie che costituiscono reato",
+              "La facoltà di procedere a perquisizione domiciliare",
+              "La facoltà di accedere a qualunque ora negli esercizi pubblici"
+            ],
+            corretta: 1
+          },
+          {
+            id: 80,
+            domanda: "La Polizia Tributaria investigativa era:",
+            opzioni: [
+              "Un diverso nome con cui identificare la Guardia di Finanza",
+              "Un Reparto Speciale della Guardia di Finanza",
+              "Un contingente specializzato della Guardia di Finanza che operava in divisa",
+              "Un contingente specializzato della Guardia di Finanza che operava in abiti borghesi"
+            ],
+            corretta: 3
+          },
+          {
+            id: 81,
+            domanda: "Il passaggio da Polizia Tributaria a Polizia Economico-Finanziaria:",
+            opzioni: [
+              "Avviene con la l. 189/1959",
+              "Avviene con il D. Lgs. 68/2001",
+              "Avviene con il D. Lgs 472/1997",
+              "Avviene con il R.D. 63/1926"
+            ],
+            corretta: 1
+          },
+          {
+            id: 82,
+            domanda: "Per essere considerata un bene nel nostro ordinamento, la vita:",
+            opzioni: [
+              "È sufficiente che sia oggetto di diritti",
+              "Deve essere oggetto di diritti ed aver un valore patrimoniale",
+              "Deve avere solo un valore patrimoniale",
+              "Deve essere fungibile"
+            ],
+            corretta: 1
+          },
+          {
+            id: 83,
+            domanda: "Secondo la concezione tradizionale protrattasi per tutto l'Ottocento cosa si intendeva per danno patrimoniale?",
+            opzioni: [
+              "La mancata produzione del reddito",
+              "La diminuzione delle entrate",
+              "La diminuzione del reddito del danneggiato inteso come spese sostenute e mancata produzione del reddito",
+              "La perdita di valore economico di un bene"
+            ],
+            corretta: 2
+          },
+          {
+            id: 84,
+            domanda: "Quali erano i redditi indicabili all'interno dell'imposta sulla ricchezza mobile?",
+            opzioni: [
+              "I redditi fondiari, ipotecari e le pensioni",
+              "I redditi ipotecari, gli stipendi, le pensioni, gli assegni di qualsiasi specie, i redditi provenienti da benefici ecclesiastici e i redditi industriali, commerciali e professionali e, in generale, ogni specie di reddito non fondiario",
+              "Redditi industriali e proventi da benefici ecclesiastici e fondiari",
+              "Redditi fondiari, commerciali e industriali"
+            ],
+            corretta: 1
+          },
+          {
+            id: 85,
+            domanda: "Come veniva calcolato l'importo da corrispondere per l'imposta sul macinato?",
+            opzioni: [
+              "Veniva calcolato in base alla quantità di cereale macinato, tramite un contatore meccanico installato nei mulini",
+              "Avveniva mediante una dichiarazione che ogni proprietario di un mulino doveva presentare",
+              "Mediante un calcolo effettuato pesando, presso le bilance dell'ufficio delle dogane",
+              "Il calcolo avveniva conteggiando il numero dei sacchi di cereale"
+            ],
+            corretta: 0
+          },
+          {
+            id: 86,
+            domanda: "Quale è l'orientamento della dottrina recente in tema di responsabilità civile?",
+            opzioni: [
+              "La persona umana è l'oggetto di una tutela assoluta con necessità di accrescere tale tutela alle esigenze generali e sociali",
+              "La limitazione delle forme di responsabilità per favorire lo sviluppo del commercio",
+              "Una riduzione delle fattispecie che determinano la responsabilità dell'individuo",
+              "La negazione di ogni forma di responsabilità civile"
+            ],
+            corretta: 0
+          },
+          {
+            id: 87,
+            domanda: "Quando è stata istituita e qual era lo scopo dell'imposta straordinaria sul patrimonio?",
+            opzioni: [
+              "Fu istituita dopo la Prima Guerra Mondiale, con il R.D.L. n. 78/1922, allo scopo di effettuare un prelievo straordinario sulla ricchezza nazionale, con carattere personale",
+              "Fu istituita nei primi anni del '900 per far fronte ad una crisi del debito pubblico",
+              "Venne emanata dal Governo Giolitti del 1911 per far fronte alla guerra in Libia",
+              "Fu istituita nel 1866 dal Governo per raggiungere il pareggio di bilancio"
+            ],
+            corretta: 0
+          },
+          {
+            id: 88,
+            domanda: "II trust:",
+            opzioni: [
+              "È un istituto di common law (equity) per separare beni dal patrimonio per specifici interessi, affidandone la gestione a un trustee",
+              "Nell'ambito della common law era l'atto unilaterale mortis causa",
+              "È l'insieme delle norme giuridiche per la concorrenza degli scambi commerciali",
+              "Era un mandato fiduciario con ordine di restituzione"
+            ],
+            corretta: 0
+          },
+          {
+            id: 89,
+            domanda: "Nell'ambito della common law la consideration rappresenta:",
+            opzioni: [
+              "L'elemento essenziale della controprestazione fornita dalle controparti nell'ambito dei simple contracts",
+              "Il criterio che nell'ordinamento anglosassone veniva utilizzato dal Cancelliere del Re",
+              "Il favore con cui venne accolto il Codice Napoleonico",
+              "L'elemento dell'accordo nei contratti di common law"
+            ],
+            corretta: 0
+          },
+          {
+            id: 90,
+            domanda: "In ambito europeo il diritto civile nel corso del tempo:",
+            opzioni: [
+              "Ha subito un continuo processo di unificazione",
+              "Ha avuto un iter che ha portato ad una continua frammentazione",
+              "È rimasto estraneo ai processi di integrazione dell'Unione Europea",
+              "Ha seguito un percorso indipendente dalle vicende politico economiche dell'età moderna"
+            ],
+            corretta: 1
+          },
+          {
+            id: 91,
+            domanda: "Che cos'era la tassa di manomorta, istituita nel Regno d'Italia con la L. 587/1862?",
+            opzioni: [
+              "Era un'imposta dovuta a fronte dell'attività amministrativa svolta a favore del contribuente",
+              "Era una tassa annuale proporzionale che si applicava alla rendita dei beni degli enti morali, computata nella misura stabilita per le tasse di registro nei casi di trasmissione mortis causa",
+              "Era una tassa dovuta per le operazioni d'assicurazione",
+              "Era una tassa calcolata sul prezzo dei viaggiatori e delle merci"
+            ],
+            corretta: 1
+          },
+          {
+            id: 92,
+            domanda: "In cosa si sostanziava il regime fiscale dell'imposta sul consumo del sale?:",
+            opzioni: [
+              "Si basava su un ammontare calcolato in misura inversamente proporzionale al peso",
+              "Era un'imposta dovuta a fronte dell'attività svolta a favore del contribuente",
+              "La privativa fiscale prevedeva che si sostituisse un monopolio a favore dello Stato per la fabbricazione e/o la vendita, vietandole ai privati",
+              "Si basava sul libero mercato"
+            ],
+            corretta: 2
+          },
+          {
+            id: 93,
+            domanda: "L'imposta di registro, alla data della sua istituzione, quale finalità aveva?:",
+            opzioni: [
+              "Registrare atti di natura penalistica",
+              "Aveva il duplice scopo di fornire un'entrata fiscale e di remunerare lo Stato per il servizio offerto ai privati per atti civili giudiziali, stragiudiziali e mortis causa",
+              "Remunerare un servizio pubblico",
+              "Meramente vessatoria"
+            ],
+            corretta: 1
+          },
+          {
+            id: 94,
+            domanda: "Il canone di abbonamento radiotelevisivo è una prestazione tributaria, il cui presupposto è:",
+            opzioni: [
+              "L'utilizzo di un apparecchio radiofonico o televisivo",
+              "La detenzione di un apparecchio radiofonico ovvero televisivo",
+              "Esclusivamente la detenzione di un apparecchio televisivo",
+              "L'utilizzo di un apparecchio televisivo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 95,
+            domanda: "Con l'espressione \"civil law\" si fa riferimento a:",
+            opzioni: [
+              "Un modello di ordinamento basato esclusivamente sui precedenti giurisprudenziali",
+              "Ordinamenti giuridici in cui il diritto è principalmente scritto",
+              "Un sistema di regole consuetudinarie non scritte",
+              "II diritto applicato esclusivamente dalle corporazioni medievali"
+            ],
+            corretta: 1
+          },
+          {
+            id: 96,
+            domanda: "Alla base del processo di codificazione vi è essenzialmente:",
+            opzioni: [
+              "La volontà di preservare il pluralismo giuridico medievale",
+              "L'esigenza di creare un sistema di norme scritte coerente, organizzato e privo di lacune al fine di garantire certezza del diritto e uguaglianza",
+              "La necessità di attribuire maggiore potere interpretativo ai giudici",
+              "Il desiderio di ritornare all'applicazione esclusiva del diritto romano classico"
+            ],
+            corretta: 1
+          },
+          {
+            id: 97,
+            domanda: "In quale delle seguenti situazioni è identificabile l'esperienza giuridica medioevale?",
+            opzioni: [
+              "Centralizzazione del potere normativo nelle mani del monarca assoluto",
+              "Pluralismo delle fonti giuridiche e adattamento del corpus iuris ai fini della utilizzazione pratica",
+              "Esclusiva applicazione del diritto codificato e rifiuto della consuetudine",
+              "Unificazione del diritto civile e del diritto commerciale"
+            ],
+            corretta: 1
+          },
+          {
+            id: 98,
+            domanda: "Quale delle seguenti caratteristiche descrive meglio la reale natura dei principi alla base del Codice Napoleonico?",
+            opzioni: [
+              "Un insieme di principi esclusivamente rivoluzionari e anticlericali",
+              "Un corpo normativo fondato unicamente su antiche consuetudini feudali",
+              "Un insieme di principi al contempo liberali e conservatori",
+              "Un sistema giuridico basato esclusivamente sul diritto canonico"
+            ],
+            corretta: 2
+          },
+          {
+            id: 99,
+            domanda: "Da quanti articoli è composto il Codice Napoleonico del 1804?",
+            opzioni: [
+              "1500",
+              "3214",
+              "2281",
+              "1804"
+            ],
+            corretta: 2
+          },
+          {
+            id: 100,
+            domanda: "Quale novità fondamentale ha introdotto in Italia il Codice Civile del 1942?",
+            opzioni: [
+              "La netta separazione tra diritto civile e diritto commerciale",
+              "L'introduzione del divorzio",
+              "L'unificazione tra diritto civile e commerciale",
+              "L'abolizione della proprietà privata"
+            ],
+            corretta: 2
+          },
+          {
+            id: 101,
+            domanda: "A quale corrente di pensiero può essere ricondotto il pensiero di Cesare Beccaria?",
+            opzioni: [
+              "Giuspositivismo ottocentesco",
+              "Scuola Storica del Diritto",
+              "Pandettistica",
+              "Illuminismo giuridico"
+            ],
+            corretta: 3
+          },
+          {
+            id: 102,
+            domanda: "Chi è stato il fondatore della Scuola Storica tedesca?",
+            opzioni: [
+              "Friedrich Carl von Savigny",
+              "Bernhard Windscheid",
+              "Rudolf von Jhering",
+              "Hans Kelsen"
+            ],
+            corretta: 0
+          },
+          {
+            id: 103,
+            domanda: "Chi è stato il principale artefice della redazione del Corpus luris Civilis per conto di Giustiniano?",
+            opzioni: [
+              "Irnerio",
+              "Triboniano",
+              "Accursio",
+              "Graziano"
+            ],
+            corretta: 1
+          },
+          {
+            id: 104,
+            domanda: "Gli iura propria, nel contesto del sistema giuridico dominato dallo ius commune, costituiscono:",
+            opzioni: [
+              "Il diritto universale valido per tutto l'Impero",
+              "Il diritto esclusivo della Chiesa Cattolica",
+              "I diritti particolari generati nell'ambito di un territorio specifico dominato dalle consuetudini locali",
+              "Le leggi emanate esclusivamente dall'Imperatore"
+            ],
+            corretta: 2
+          },
+          {
+            id: 105,
+            domanda: "A quale principale funzione assolvevano le corporazioni nel medioevo secondo la concezione riportata nel testo?",
+            opzioni: [
+              "Regolamentare pacificamente il commercio e l'artigianato",
+              "Sovvertire l'ordine pubblico costituito",
+              "Amministrare la giustizia penale per conto del Re",
+              "Riscuotere i tributi imperiali"
+            ],
+            corretta: 0
+          },
+          {
+            id: 106,
+            domanda: "Con l'espressione \"positivismo giuridico\" si indica:",
+            opzioni: [
+              "Una dottrina che fa coincidere il diritto con i principi eterni e immutabili della natura",
+              "Una corrente filosofica che nega l'esistenza di qualsiasi regola giuridica",
+              "Quella dottrina giuridica che presuppone l'identificazione del diritto unicamente in quello posto e fatto valere dalla autorità statale all'interno di una data comunità",
+              "Il sistema basato esclusivamente sulle decisioni equitative del giudice"
+            ],
+            corretta: 2
+          },
+          {
+            id: 107,
+            domanda: "Come cambia la concezione dell'individuo con l'Umanesimo?",
+            opzioni: [
+              "Si riafferma la visione teocentrica tipica dell'Alto Medioevo",
+              "L'individuo perde ogni rilevanza giuridica a favore dello Stato assoluto",
+              "Si assiste a un totale cambiamento di prospettiva rispetto al medioevo, ponendo l'uomo al centro",
+              "La concezione rimane identica a quella del periodo medievale"
+            ],
+            corretta: 2
+          },
+          {
+            id: 108,
+            domanda: "Il principio fondamentale elaborato da Montesquieu, alla base dei moderni ordinamenti giuridici, si identifica:",
+            opzioni: [
+              "Nel principio della separazione dei poteri dello Stato al fine di creare un sistema perfettamente bilanciato",
+              "Nella concentrazione di tutti i poteri nelle mani del sovrano",
+              "Nel primato del potere giudiziario su quello legislativo ed esecutivo",
+              "Nell'abolizione dello Stato di diritto"
+            ],
+            corretta: 0
+          },
+          {
+            id: 109,
+            domanda: "Chi fu il ministro delle finanze che riuscì a raggiungere il pareggio di bilancio nel 1876 consolidando la credibilità internazionale del Regno d'Italia?",
+            opzioni: [
+              "Camillo Benso conte di Cavour",
+              "Agostino Depretis",
+              "Quintino Sella",
+              "Luigi Luzzatti"
+            ],
+            corretta: 2
+          },
+          {
+            id: 110,
+            domanda: "Quale misura segnò la svolta protezionistica della Sinistra Storica sotto la guida di Luigi Luzzatti?",
+            opzioni: [
+              "L'abolizione di ogni barriera doganale",
+              "L'introduzione di nuovi dazi doganali sul grano, prodotti tessili e siderurgici",
+              "La privatizzazione delle ferrovie",
+              "L'introduzione dell'imposta sul macinato"
+            ],
+            corretta: 1
+          },
+          {
+            id: 111,
+            domanda: "Quale imposta, introdotta nel 1868, scatenò diffuse proteste popolari e rivolte?",
+            opzioni: [
+              "L'imposta di ricchezza mobile",
+              "L'imposta sul celibato",
+              "La tassa di manomorta",
+              "L'imposta sul macinato"
+            ],
+            corretta: 3
+          },
+          {
+            id: 112,
+            domanda: "Quale compito aveva la Legione Truppe Leggere in tempo di pace?",
+            opzioni: [
+              "Gestire esclusivamente l'ordine pubblico nelle grandi città",
+              "Costituire l'estremo elemento avanzato sulle Alpi con finalità di pattugliamento della linea di confine e vigilanza anticontrabbando",
+              "Raccogliere i dazi all'interno dei porti marittimi",
+              "Svolgere funzioni di polizia militare per il Regio Esercito"
+            ],
+            corretta: 1
+          },
+          {
+            id: 113,
+            domanda: "Quale delle seguenti affermazioni è vera riguardo alla situazione dell'Italia nel 1861?",
+            opzioni: [
+              "L'industria pesante era il settore trainante dell'economia",
+              "La maggior parte della forza lavoro era impiegata nel settore agricolo, essendo l'industria non ancora diffusa e sviluppata",
+              "Vi era una perfetta integrazione economica tra Nord e Sud",
+              "Il settore terziario occupava oltre il 70% della popolazione"
+            ],
+            corretta: 1
+          },
+          {
+            id: 114,
+            domanda: "Qual era una caratteristica dei circuiti di mercato nell'Italia preunitaria?",
+            opzioni: [
+              "Erano fortemente integrati a livello nazionale",
+              "Dipendevano esclusivamente dalle esportazioni oltreoceano",
+              "Erano locali o esteri, ma non integrati a livello nazionale a causa di fattori strutturali e politici",
+              "Erano inesistenti, basandosi l'economia solo sul baratto"
+            ],
+            corretta: 2
+          },
+          {
+            id: 115,
+            domanda: "Quale delle seguenti condizioni accentuava la segmentazione socioeconomica dell'Italia preunitaria?",
+            opzioni: [
+              "L'adoption di una moneta unica in tutti gli Stati preunitari",
+              "La presenza di una fitta rete ferroviaria nazionale",
+              "Le forti differenze tra aree costiere, interne, urbane e rurali",
+              "L'uniformità climatica e morfologica del territorio"
+            ],
+            corretta: 2
+          },
+          {
+            id: 116,
+            domanda: "Quale area agricola italiana preunitaria era caratterizzata da grandi latifondi e uso di braccianti?",
+            opzioni: [
+              "La Pianura Padana",
+              "L'arco alpino",
+              "II Mezzogiorno",
+              "La Toscana"
+            ],
+            corretta: 2
+          },
+          {
+            id: 117,
+            domanda: "Secondo l'evoluzione storica del diritto, a quale importante traguardo normativo porta l'Illuminismo giuridico?",
+            opzioni: [
+              "Alla redazione del Code Civil",
+              "Alla restaurazione del diritto feudale",
+              "All'affermazione del mos italicus",
+              "Alla compilazione del Corpus luris Civilis"
+            ],
+            corretta: 0
+          },
+          {
+            id: 118,
+            domanda: "A metà dell'Ottocento, Rudolf von Jhering propose la \"giurisprudenza degli interessi\" sostenendo che:",
+            opzioni: [
+              "Il diritto è un meccanismo sociale per armonizzare gli interessi del singolo e del gruppo, mediandone le tensioni",
+              "II diritto si basa unicamente sull'esegesi letterale del testo normativo",
+              "Gli istituti giuridici non hanno alcuno scopo sociale",
+              "L'unico interesse da tutelare è quello dello Stato assoluto"
+            ],
+            corretta: 0
+          },
+          {
+            id: 119,
+            domanda: "I giuristi Widar Cesarini Sforza ed Enrico Finzi si dedicarono in particolar modo:",
+            opzioni: [
+              "Al solo studio del diritto feudale e rurale",
+              "Al problema del collegamento tra i soggetti privati e le pluralità emergenti nella società (associazioni, società di capitali)",
+              "Alla traduzione esclusiva del Code Civil in italiano",
+              "Alla redazione formale del codice penale"
+            ],
+            corretta: 1
+          },
+          {
+            id: 120,
+            domanda: "A quale anno viene convenzionalmente fatta risalire la nascita della Polizia Tributaria investigativa come contingente specializzato della Guardia di Finanza?",
+            opzioni: [
+              "1862",
+              "1774",
+              "1923",
+              "1959"
+            ],
+            corretta: 2
+          },
+          {
+            id: 121,
+            domanda: "L'art. 4 del Code Civil francese del 1804 sanciva un principio fondamentale, ovvero:",
+            opzioni: [
+              "L'abolizione di ogni forma di proprietà privata terriera",
+              "Il divieto di \"non liquet\", obbligando il giudice a decidere anche in caso di silenzio, oscurità o difetto della legge",
+              "L'introduzione del divorzio consensuale in maniera indiscriminata",
+              "La rigida e totale separazione tra Chiesa e Stato nelle questioni ereditarie"
+            ],
+            corretta: 1
+          },
+          {
+            id: 122,
+            domanda: "In quale occasione fu concessa la Bandiera di Guerra al Corpo della Guardia di Finanza?",
+            opzioni: [
+              "Durante la Prima Guerra d'Indipendenza",
+              "In occasione della Festa dello Statuto del 1914",
+              "Alla fine della Seconda Guerra Mondiale",
+              "Al momento della fondazione della Legione Truppe Leggere"
+            ],
+            corretta: 1
+          },
+          {
+            id: 123,
+            domanda: "Con l'espressione \"droit intermédiaire\" nella storia francese si indica:",
+            opzioni: [
+              "Il diritto commerciale transnazionale applicato ai mercanti in viaggio",
+              "Il diritto prodotto nel periodo compreso tra la Rivoluzione Francese e la promulgazione del Code Civil, per stabilizzare le conquiste rivoluzionarie",
+              "Le norme prettamente ecclesiastiche che regolavano i rapporti tra nobiltà e clero",
+              "Le consuetudini germaniche applicate nelle zone di confine della Gallia"
+            ],
+            corretta: 1
+          },
+          {
+            id: 124,
+            domanda: "Chi è l'autore del celebre trattato \"Le leggi civili nel loro ordine naturale\" (Les lois civiles dans leur ordre naturel)?",
+            opzioni: [
+              "Jean Domat",
+              "Robert Pothier",
+              "François Hotman",
+              "Portalis"
+            ],
+            corretta: 0
+          },
+          {
+            id: 125,
+            domanda: "Quale tipologia di contratto commerciale e marittimo medievale prevedeva che un soggetto fornisse il capitale (commendatore) e un altro intraprendesse fisicamente il viaggio per l'affare (commendato)?",
+            opzioni: [
+              "L'enfiteusi",
+              "Il livello",
+              "La commenda",
+              "Il mutuo ad usura"
+            ],
+            corretta: 2
+          },
+          {
+            id: 126,
+            domanda: "Con quale provvedimento normativo italiano venne abolita la cosiddetta \"pregiudiziale tributaria\"?",
+            opzioni: [
+              "Riforma Vanoni del 1951",
+              "Legge n. 516 del 1982 (c.d. \"manette agli evasori\")",
+              "Legge delega per la riforma fiscale degli anni '70",
+              "Lo Statuto dei Diritti del Contribuente (L. 212/2000)"
+            ],
+            corretta: 1
+          },
+          {
+            id: 127,
+            domanda: "La Convenzione di Oviedo, firmata nel 1997, rappresenta un trattato fondamentale in materia di:",
+            opzioni: [
+              "Diritto della navigazione internazionale",
+              "Diritti umani e biomedicina",
+              "Cooperazione fiscale europea transfrontaliera",
+              "Regolamentazione unificata dei dazi doganali"
+            ],
+            corretta: 1
+          },
+          {
+            id: 128,
+            domanda: "Cosa stabili la celebre \"Constitutio Antoniniana\" (Editto di Caracalla) del 212 d.C.?",
+            opzioni: [
+              "L'abolizione formale della schiavitù nei territori sottomessi",
+              "La codificazione definitiva del diritto romano classico",
+              "L'estensione della cittadinanza romana a tutti gli uomini liberi dell'Impero",
+              "La divisione amministrativa dell'Impero in Oriente e Occidente"
+            ],
+            corretta: 2
+          },
+          {
+            id: 129,
+            domanda: "Quale importante merito storico è attribuito al giurista tedesco Karl Salomo Zachariä in relazione alla Francia?",
+            opzioni: [
+              "Aver redatto personalmente il codice civile francese sotto Napoleone",
+              "Aver introdotto in Francia il pensiero giuridico tedesco e le idee della Scuola Storica, criticando il concetto di codice",
+              "Aver fondato la Scuola dell'Esegesi e sostenuto l'interpretazione letterale",
+              "Aver tradotto il Digesto in lingua volgare francese"
+            ],
+            corretta: 1
+          },
+          {
+            id: 130,
+            domanda: "Dove fu istituita la prima sede della Scuola per Sottufficiali (oggi Scuola Ispettori e Sovrintendenti) della Guardia di Finanza?",
+            opzioni: [
+              "Roma",
+              "L'Aquila",
+              "Caserta",
+              "Predazzo"
+            ],
+            corretta: 2
+          },
+          {
+            id: 131,
+            domanda: "Il giurista francese François Gény ha introdotto una fondamentale distinzione teorica nel diritto, separando:",
+            opzioni: [
+              "Il diritto civile dal diritto commerciale internazionale",
+              "\"Il dato\" (diritto naturale, inerente ai rapporti sociali) e \"il costruito\" (diritto positivo, tecnica giuridica)",
+              "La nozione di proprietà assoluta da quella di possesso di buona fede",
+              "Il diritto pubblico dal diritto amministrativo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 132,
+            domanda: "In quale anno furono ufficialmente concesse le \"stellette\" militari al Corpo della Guardia di Finanza, parificandolo militarmente alle altre forze armate?",
+            opzioni: [
+              "1862",
+              "1881",
+              "1907",
+              "1914"
+            ],
+            corretta: 2
+          },
+          {
+            id: 133,
+            domanda: "Quale celebre opera pubblicò Hermann Kantorowicz nel 1906, criticando l'illusione della completezza del codice e rivendicando libertà di interpretazione per il giudice?",
+            opzioni: [
+              "Lo spirito del diritto romano",
+              "La lotta per la scienza del diritto",
+              "Il diritto privato della borghesia",
+              "Sistema del diritto romano attuale"
+            ],
+            corretta: 1
+          },
+          {
+            id: 134,
+            domanda: "A quale insigne giurista e politico italiano dell'Ottocento si fa risalire la prima fondamentale teorizzazione del concetto di \"ordine pubblico\" in ambito penale (nel Codice del 1889)?",
+            opzioni: [
+              "Cesare Beccaria",
+              "Francesco Carrara",
+              "Giuseppe Zanardelli",
+              "Enrico Ferri"
+            ],
+            corretta: 2
+          },
+          {
+            id: 135,
+            domanda: "Chi furono i due giuristi italiani che, a cavallo tra l'Ottocento e il Novecento, tradussero in italiano il manuale delle Pandette di Windscheid?",
+            opzioni: [
+              "Vittorio Scialoja e Cesare Vivante",
+              "Carlo Fadda e Paolo Emilio Bensa",
+              "Widar Cesarini Sforza ed Enrico Finzi",
+              "Arturo Carlo Jemolo e Francesco Carnelutti"
+            ],
+            corretta: 1
+          },
+          {
+            id: 136,
+            domanda: "Quale grande intellettuale del Rinascimento confrontò analiticamente la \"littera Pisana\" (o Florentina) con la \"littera Bononiensis\" per realizzare un'edizione critica del Digesto giustinianeo?",
+            opzioni: [
+              "Angelo Poliziano",
+              "Lorenzo Valla",
+              "Andrea Alciato",
+              "Francesco Petrarca"
+            ],
+            corretta: 0
+          },
+          {
+            id: 137,
+            domanda: "Come concepiva l'unità del sistema giuridico Georg Friedrich Puchta, esponente della \"giurisprudenza dei concetti\"?",
+            opzioni: [
+              "Come un insieme frammentario di consuetudini orali",
+              "Come una piramide concettuale astratta, in cui i concetti sono legati da rigidi nessi deduttivi formali",
+              "Come un prodotto esclusivo dell'economia e dei conflitti di classe",
+              "Come l'espressione diretta e incontrollata della giurisprudenza pretoria"
+            ],
+            corretta: 1
+          },
+          {
+            id: 138,
+            domanda: "Oltre all'art. 832 del Codice Civile, quale articolo della Costituzione italiana garantisce e contemporaneamente pone limiti alla proprietà privata per assicurarne la \"funzione sociale\"?",
+            opzioni: [
+              "Art. 42",
+              "Art. 53",
+              "Art. 3",
+              "Art. 21"
+            ],
+            corretta: 0
+          },
+          {
+            id: 139,
+            domanda: "II Codice di Commercio italiano del 1882 adottava il criterio oggettivo. Cosa comportava per gli atti stipulati tra un commerciante e un non commerciante?",
+            opzioni: [
+              "Erano regolati esclusivamente dal Codice Civile, proteggendo il non commerciante",
+              "Erano considerati radicalmente nulli per vizio di forma",
+              "Erano sottoposti nella loro interezza alla disciplina del diritto commerciale",
+              "Si applicava a tali rapporti il diritto consuetudinario agrario"
+            ],
+            corretta: 2
+          },
+          {
+            id: 140,
+            domanda: "Secondo il Codice Napoleonico (Code Civil), il trasferimento della proprietà di un bene:",
+            opzioni: [
+              "Richiede la consegna materiale della cosa (traditio) in ogni caso",
+              "Avviene al momento stesso della conclusione del contratto, per effetto del principio consensualistico",
+              "È valido solo se trascritto nei registri pubblici, anche per i beni mobili",
+              "Può avvenire solo mortis causa e non per atto inter vivos"
+            ],
+            corretta: 1
+          },
+          {
+            id: 141,
+            domanda: "Che cosa si intende per \"lex mercatoria\" nello sviluppo storico del diritto commerciale?",
+            opzioni: [
+              "Le antiche leggi penali romane sul commercio marittimo nel Mediterraneo",
+              "Un insieme di regole nate direttamente dalla pratica degli affari, applicate originariamente in Europa e poi diffuse globalmente nei commerci",
+              "L'insieme sistematico dei dazi doganali del Regno d'Italia",
+              "Una legge protezionistica emanata dal Re d'Inghilterra nel Seicento"
+            ],
+            corretta: 1
+          },
+          {
+            id: 142,
+            domanda: "A quale anno risale la legge che definisce l'ordinamento moderno del Corpo della Guardia di Finanza?",
+            opzioni: [
+              "1862",
+              "1923",
+              "1959",
+              "2001"
+            ],
+            corretta: 2
+          },
+          {
+            id: 143,
+            domanda: "Secondo l'art. 2 della Costituzione italiana, i diritti inviolabili dell'uomo e i doveri di solidarietà:",
+            opzioni: [
+              "Trovano fondamento e ispirazione nel positivismo giuridico",
+              "Trovano fondamento e ispirazione nel giusnaturalismo",
+              "Trovano fondamento e ispirazione nel nichilismo giuridico",
+              "Trovano fondamento nel realismo giuridico anglosassone"
+            ],
+            corretta: 1
+          },
+          {
+            id: 144,
+            domanda: "Nel Code Civil francese, quale regola fondamentale viene eletta a principio generale per i beni mobili da Pothier?",
+            opzioni: [
+              "Possesso vale titolo",
+              "Res nullius",
+              "Dominio diviso",
+              "La proprietà è un diritto esclusivamente dello Stato"
+            ],
+            corretta: 0
+          },
+          {
+            id: 145,
+            domanda: "Come sono considerati i nascenti contratti finanziari nella post-modernità giuridica secondo l'analisi dell'evoluzione dei mercati?",
+            opzioni: [
+              "Puri strumenti speculativi affetti da nullità insanabile",
+              "Misuratori e generatori di nuova ricchezza",
+              "Contratti tipici di diritto amministrativo",
+              "Elementi accessori del trust immobiliare"
+            ],
+            corretta: 1
+          },
+          {
+            id: 146,
+            domanda: "Come viene considerata la consuetudine nell'ordinamento giuridico medievale?",
+            opzioni: [
+              "Una fonte giuridica abrogata dalla volontà del Re",
+              "Una fonte normativamente subordinata alla legge scritta",
+              "Una fonte sovraordinata e ordinante, ergendosi a vera e propria costituzione",
+              "Un uso locale valevole unicamente per la plebe rurale"
+            ],
+            corretta: 2
+          },
+          {
+            id: 147,
+            domanda: "Quale era la principale differenza tra \"commenda\" e \"compagnia\" nel diritto commerciale medievale?",
+            opzioni: [
+              "Nella compagnia tutti i soci partecipano e dividono i guadagni proporzionalmente. nella commenda un soggetto finanzia e l'altro viaggia con ripartizione asimmetrica degli utili",
+              "Sono due termini che indicano esattamente lo stesso tipo di società",
+              "La commenda era usata per i commerci via terra, la compagnia solo per quelli marittimi",
+              "La compagnia era un ente no profit, mentre la commenda aveva scopo di lucro"
+            ],
+            corretta: 0
+          },
+          {
+            id: 148,
+            domanda: "La compilazione di Giustiniano (Corpus luris Civilis) viene storicamente e tecnicamente classificata come:",
+            opzioni: [
+              "Una codificazione innovativa che abrogava tutto il passato",
+              "Una consolidazione, trattandosi di una raccolta ordinata di testi normativi e giurisprudenziali precedenti",
+              "Un testo legislativo contenente unicamente precetti morali e religiosi",
+              "Una legge imposta dalle popolazioni barbariche"
+            ],
+            corretta: 1
+          },
+          {
+            id: 149,
+            domanda: "Quale fu il principale ostacolo iniziale allo sviluppo del contratto di assicurazione?",
+            opzioni: [
+              "Era considerato inutile dai mercanti olandesi",
+              "Non c'era ancora stata la scoperta dell'America",
+              "Non era riconosciuto in quanto fondato sull'alea (rischio) e considerato vicino all'usura",
+              "Nasceva originariamente come contratto esclusivo del diritto pubblico statale"
+            ],
+            corretta: 2
+          },
+          {
+            id: 150,
+            domanda: "Quali strumenti giuridici servono, insieme, a sopperire alle lacune che possono essere presenti nell'ordinamento?",
+            opzioni: [
+              "L'utilizzo della glossa e del commento",
+              "L'astrattezza, l'integrità e l'analogia",
+              "L'applicazione meccanica della volontà del legislatore",
+              "Il ricorso all'equità e alla sola giurisprudenza"
+            ],
+            corretta: 1
+          },
+          {
+            id: 151,
+            domanda: "Con l'espressione \"età della codificazione\" si indica:",
+            opzioni: [
+              "L'epoca della caduta dell'impero romano d'occidente",
+              "Il periodo tra Settecento e Ottocento in cui, su spinta illuminista, si elaborano i codici per garantire uguaglianza e certezza",
+              "Il pieno periodo medievale dominato dal pluralismo giuridico",
+              "Il periodo del Rinascimento in cui nasce l'umanesimo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 152,
+            domanda: "Da quale evento storico la dottrina fa convenzionalmente coincidere l'inizio della \"modernità giuridica\"?",
+            opzioni: [
+              "Dalla nascita dell'Università di Bologna nel 1088",
+              "Dalla promulgazione del Code Civil francese nel 1804",
+              "Dalla fondazione della Repubblica napoletana nel 1799",
+              "Dalla pubblicazione della Francogallia nel 1573"
+            ],
+            corretta: 1
+          },
+          {
+            id: 153,
+            domanda: "Cosa si intende per \"deriva sociologica del diritto francese\" tra Ottocento e Novecento?",
+            opzioni: [
+              "Il trionfo dell'applicazione meccanica e sillogistica della Scuola dell'Esegesi",
+              "La crisi del formalismo giuridico e l'incapacità della dottrina tradizionale di comprendere e guidare l'evoluzione della società",
+              "L'introduzione del codice civile tedesco (BGB) in Francia",
+              "L'applicazione diffusa della Common law nei tribunali transalpini"
+            ],
+            corretta: 1
+          },
+          {
+            id: 154,
+            domanda: "II \"nuovo diritto comune\" europeo in via di formazione si sviluppa essenzialmente attraverso tre direttrici, ovvero:",
+            opzioni: [
+              "Unificazione formale, circolazione di istituti tipici tra ordinamenti e creazione di criteri originali di soluzione delle controversie",
+              "Il ritorno esclusivo all'applicazione del Corpus luris Civilis",
+              "L'abrogazione progressiva e totale di tutti i codici civili nazionali",
+              "Nessuna delle risposte precedenti"
+            ],
+            corretta: 0
+          },
+          {
+            id: 155,
+            domanda: "Il giurista meridionale Francesco Filomusi Guelfi cercò idealmente di collegare:",
+            opzioni: [
+              "La sistematica della Pandettistica tedesca (Hegel) con la tradizione speculativa filosofica meridionale",
+              "L'uso della lingua latina nelle corti di giustizia",
+              "La Common law con l'antico diritto civile di Roma",
+              "Il diritto penale dell'illuminismo con il diritto canonico",
+              "La filosofia illuminista con i precetti del diritto feudale"
+            ],
+            corretta: 0
+          },
+          {
+            id: 156,
+            domanda: "Giacomo Venezian, agli inizi del Novecento, focalizzò i suoi studi innovativi principalmente su due argomenti:",
+            opzioni: [
+              "Il diritto penale d'impresa e il diritto agrario",
+              "Le proprietà collettive e l'istituto anglosassone della consideration",
+              "La divisione tra feudo e allodio",
+              "Il concetto di ordine pubblico e l'abuso del diritto"
+            ],
+            corretta: 1
+          },
+          {
+            id: 157,
+            domanda: "A quale autore si deve il saggio \"Agricoltura, diritto e proprietà\" nel quale sottolinea in modo decisivo l'autonomia del diritto agrario?",
+            opzioni: [
+              "Antonio Scialoja",
+              "Salvatore Pugliatti",
+              "Gian Gastone Bolla",
+              "Hermann Kantorowicz"
+            ],
+            corretta: 1
+          },
+          {
+            id: 158,
+            domanda: "A quale giurista è legato il definitivo e stabile connubio tra studi sociologici e studio del diritto in Francia nel Novecento?",
+            opzioni: [
+              "Bernhard Windscheid",
+              "Jean Carbonnier",
+              "Friedrich Carl von Savigny",
+              "Jean Domat"
+            ],
+            corretta: 1
+          },
+          {
+            id: 159,
+            domanda: "Nel diritto romano, a quale figura giurisdizionale si deve la prima storica applicazione sistematica dell'interpretazione analogica (analogia legis)?",
+            opzioni: [
+              "Al pretore romano",
+              "Al'imperatore Giustiniano",
+              "Ai glossatori bolognesi",
+              "Al console romano"
+            ],
+            corretta: 0
+          },
+          {
+            id: 160,
+            domanda: "Come venne superato, attraverso il pensiero di Sant'Agostino, il problema dogmatico relativo al divieto cristiano di prestito a interesse?",
+            opzioni: [
+              "Scomunicando chiunque prestasse denaro",
+              "Accettando la remunerazione di un normale tasso d'interesse, differenziandolo dalla pratica usuraia",
+              "Rendendo obbligatorio unicamente il mutuo gratuito per tutti i fedeli",
+              "Inventando il sistema fiduciario del trust immobiliare"
+            ],
+            corretta: 1
+          },
+          {
+            id: 161,
+            domanda: "Di quale celebre opera in ambito civilistico, base essenziale per l'elaborazione del codice civile francese, è autore il giurista Pothier?",
+            opzioni: [
+              "II Trattato delle obbligazioni",
+              "La Francogallia",
+              "L'Antitribonianus",
+              "La teoria pura del diritto"
+            ],
+            corretta: 0
+          },
+          {
+            id: 162,
+            domanda: "In quante epoche fondamentali viene generalmente divisa, a fini didattico-sistematici, l'evoluzione della storia del diritto occidentale?",
+            opzioni: [
+              "Due (classica e medievale)",
+              "Tre (antica, moderna e post-moderna)",
+              "Quattro (antica, medievale, illuminista e contemporanea)",
+              "Una sola indivisibile ed immutabile"
+            ],
+            corretta: 1
+          },
+          {
+            id: 163,
+            domanda: "L'economia sociale di mercato si caratterizza per essere:",
+            opzioni: [
+              "Un mercato statalizzato basato sulla pianificazione centrale",
+              "Un sistema di libera iniziativa in cui però legislatore e autorità possono intervenire per evitare distorsioni e garantire la concorrenza",
+              "Un mercato totalmente privo di regole imposte dall'alto (puro liberismo)",
+              "Un sistema economico di tipo corporativo-medievale chiuso e protetto"
+            ],
+            corretta: 1
+          },
+          {
+            id: 164,
+            domanda: "Qual fu lo scopo fondamentale della redazione del codice prussiano del 1794 (ALR-Landrecht) voluto da Federico II?",
+            opzioni: [
+              "Fondere e preservare le consuetudini locali tedesche",
+              "Sostituire completamente il diritto comune in Germania",
+              "Ripristinare il predominio del diritto canonico sul suolo prussiano",
+              "Abolire il diritto romano a favore della Common Law"
+            ],
+            corretta: 1
+          },
+          {
+            id: 165,
+            domanda: "In quante fasi principali la dottrina suole suddividere l'evoluzione storico-applicativa della Scuola dell'Esegesi francese?",
+            opzioni: [
+              "Una sola fase ininterrotta durata sino a oggi",
+              "Due periodi (prima e dopo la caduta di Napoleone)",
+              "Tre periodi (1804-1848, 1848-anni '80 dell'Ottocento, ultimi due decenni dell'Ottocento)",
+              "Quattro fasi dipendenti esclusivamente dai cambi di regime repubblicano"
+            ],
+            corretta: 2
+          },
+          {
+            id: 166,
+            domanda: "A cosa serviva storicamente la \"lettera di cambio\" nel commercio transoceanico e nell'espansione mercantile?",
+            opzioni: [
+              "Ad avallare scambi basati esclusivamente sul baratto",
+              "A facilitare e regolare le compravendite nel nuovo mondo, nominando 4 figure (traente, trattario, beneficiario, numerante)",
+              "A normare unicamente il contratto di lavoro marittimo per l'equipaggio",
+              "A certificare l'avvenuto pagamento della gabella doganale al Re"
+            ],
+            corretta: 1
+          },
+          {
+            id: 167,
+            domanda: "In cosa consisteva l'istituto della \"Remissio Mercedis\" nel diritto di locazione?",
+            opzioni: [
+              "Nella facoltà del proprietario di rientrare in possesso immediato del bene in ogni momento",
+              "Nella possibilità offerta al conduttore di non pagare il canone, o di pagarlo ridotto, in base al verificarsi di particolari condizioni dettate dal rischio di impresa (cause di forza maggiore)",
+              "Nell'imposta sui celibi introdotta durante il periodo fascista",
+              "Nella confisca e perdita definitiva del feudo per fellonia"
+            ],
+            corretta: 1
+          },
+          {
+            id: 168,
+            domanda: "Quale celebre autore francese della prima metà dell'Ottocento si fece portavoce di una feroce critica \"reazionaria\" al Code Civil, giudicandolo causa delle ingiustizie e ipocritamente borghese?",
+            opzioni: [
+              "Jean-Jacques Rousseau",
+              "Honoré de Balzac",
+              "Portalis",
+              "Montesquieu"
+            ],
+            corretta: 1
+          },
+          {
+            id: 169,
+            domanda: "Il passaggio evolutivo dalla \"Lex Mercatoria\" medievale alla \"Nuova Lex Mercatoria\" in epoca moderna si realizza quando:",
+            opzioni: [
+              "Avviene la totale scomparsa delle corporazioni delle arti e dei mestieri",
+              "Gli Stati internalizzano e istituzionalizzano le norme commerciali consuetudinarie elaborate dagli ordini professionali di borghesia e mercanti",
+              "Si ha un totale ritorno all'uso del diritto canonico e del divieto di usura",
+              "Si afferma in modo esclusivo e definitivo la Common law in tutta l'Europa continentale"
+            ],
+            corretta: 1
+          },
+          {
+            id: 170,
+            domanda: "Il giurista Raymond Saleilles criticò duramente i \"dogmi\" interpretativi del suo tempo, propugnando:",
+            opzioni: [
+              "Una rigorosissima esegesi letterale ad esclusione di qualsiasi altra fonte",
+              "Che il criterio principale di interpretazione non fosse più quello letterale, ma quello storico, basato sull'osservazione dinamica del diritto nella società",
+              "L'assoluta superiorità del diritto francese sugli altri diritti nazionali europei",
+              "L'inutilità del metodo comparatistico in ambito civile"
+            ],
+            corretta: 1
+          },
+          {
+            id: 171,
+            domanda: "A quale autore si deve il saggio fondamentale \"La proprietà e le proprietà\", che esaminò lo sganciamento dell'istituto dalla visione monolitica ottocentesca, legandolo fortemente ai temi di impresa e lavoro?",
+            opzioni: [
+              "Salvatore Pugliatti",
+              "Gian Gastone Bolla",
+              "Hermann Kantorowicz",
+              "Jean Domat"
+            ],
+            corretta: 0
+          },
+          {
+            id: 172,
+            domanda: "Quale scelta operò il legislatore napoleonico redigendo il Code Civil del 1804 in merito all'istituto del divorzio introdotto in epoca rivoluzionaria?",
+            opzioni: [
+              "Lo eliminò e lo vietò in maniera totale ed assoluta",
+              "Lo mantenne in vigore, ma ne ridusse fortemente le cause e i casi di applicazione",
+              "Lo ampliò indiscriminatamente favorendo le separazioni consensuali",
+              "Ne delegò l'intera e sola disciplina ai tribunali ecclesiastici"
+            ],
+            corretta: 1
+          },
+          {
+            id: 173,
+            domanda: "A quale celebre giurista è storicamente attribuita la fondazione e la massima espressione del \"Mos Gallicus\" (Umanesimo giuridico) in Francia, attraverso la Scuola Culta?",
+            opzioni: [
+              "Irnerio",
+              "Accursio",
+              "Andrea Alciato",
+              "Savigny"
+            ],
+            corretta: 2
+          },
+          {
+            id: 174,
+            domanda: "Una delle caratteristiche intrinseche della \"storicità\" che permea l'ordinamento giuridico medievale risiede nel fatto che esso:",
+            opzioni: [
+              "È creato dal monarca in maniera astratta, immutabile e distaccata dai bisogni della società",
+              "È un diritto esclusivamente codificato e organizzato gerarchicamente",
+              "È un diritto che nasce e si sviluppa in stretta aderenza alla vita quotidiana, presentandosi in forma prevalentemente consuetudinaria, concreta e asistematica",
+              "È ritenuto eterno, immutabile e non suscettibile di alcuna interpretazione o glossa"
+            ],
+            corretta: 2
+          },
+          {
+            id: 175,
+            domanda: "In quale città nacque e si sviluppò originariamente la Scuola dei Glossatori?",
+            opzioni: [
+              "Parigi",
+              "Bologna",
+              "Firenze",
+              "Napoli"
+            ],
+            corretta: 1
+          },
+          {
+            id: 176,
+            domanda: "Nello studio del diritto medievale, che cosa indica specificamente il termine \"glossa\"?",
+            opzioni: [
+              "Un'annotazione marginale o interlineare al testo del Corpus luris con funzione interpretativa del diritto giustinianeo",
+              "Una legge emanata dal monarca assoluto per abrogare le consuetudini locali",
+              "Una raccolta di sentenze emesse dai tribunali mercantili europei",
+              "Un trattato filosofico sulla natura del diritto canonico"
+            ],
+            corretta: 0
+          },
+          {
+            id: 177,
+            domanda: "L'opera \"Antitribonianus\", che muoveva una forte critica al metodo della Scuola Bolognese e accusava Triboniano di aver compromesso l'integrità del diritto romano, è stata scritta da:",
+            opzioni: [
+              "Andrea Alciato",
+              "François Hotman",
+              "Jean Domat",
+              "Friedrich Carl von Savigny"
+            ],
+            corretta: 1
+          },
+          {
+            id: 178,
+            domanda: "Che cosa contiene specificamente il Codice (Codex) all'interno della compilazione di Giustiniano?",
+            opzioni: [
+              "Una raccolta ufficiale di costituzioni imperiali",
+              "I pareri dei giureconsulti dell'epoca classica",
+              "Le sentenze dei tribunali locali",
+              "I principi di diritto naturale"
+            ],
+            corretta: 0
+          },
+          {
+            id: 179,
+            domanda: "Come era concepita la proprietà all'interno del codice civile ottocentesco (ad esempio nel Code Civil o nel Codice del 1865)?",
+            opzioni: [
+              "Come un diritto di dominio diviso in diretto e utile",
+              "Come una concessione temporanea e revocabile da parte dello Stato",
+              "Come un diritto privato, di godere e disporre delle cose in maniera più assoluta, pur con limiti per utilità pubblica",
+              "Come una proprietà esclusivamente collettiva"
+            ],
+            corretta: 2
+          },
+          {
+            id: 180,
+            domanda: "A partire dal 1° gennaio 1973, quale nuova imposta ha definitivamente sostituito l'Imposta Generale sull'Entrata (IGE)?",
+            opzioni: [
+              "L'Imposta sul Valore Aggiunto (IVA)",
+              "L'Imposta di Ricchezza Mobile",
+              "L'Imposta sul Reddito delle Società (IRES)",
+              "L'Imposta Comunale sugli Immobili (ICI)"
+            ],
+            corretta: 0
+          },
+          {
+            id: 181,
+            domanda: "Qual è il rapporto tra la Storia del diritto moderno e la letteratura?",
+            opzioni: [
+              "La Storia del diritto moderno è considerata a tutti gli effetti un genere letterario",
+              "La Storia del diritto moderno non è una letteratura, ma la letteratura racconta l'incidenza del diritto nella storia",
+              "La letteratura è considerata una fonte del diritto positivo",
+              "Nessun rapporto, il diritto si basa unicamente sui codici"
+            ],
+            corretta: 1
+          },
+          {
+            id: 182,
+            domanda: "Quale importante figura di reato si è iniziata a delineare nel diritto tributario con il decreto luogotenenziale del 1866, legato alla disciplina dell'imposta sul consumo del sale?",
+            opzioni: [
+              "Il reato di elusione fiscale internazionale",
+              "Il reato di associazione di contrabbando",
+              "Il reato di falso in bilancio e truffa",
+              "Il reato di abuso d'ufficio e peculato"
+            ],
+            corretta: 1
+          },
+          {
+            id: 183,
+            domanda: "Come è stato anche definito sociologicamente il Code Civil francese del 1804 da una parte della dottrina?",
+            opzioni: [
+              "Un monumento alla paura della borghesia, teso a consolidare e proteggere le ricchezze acquisite",
+              "Il manifesto dell'aristocrazia e del clero",
+              "Il primo codice a tutela delle classi proletarie",
+              "Una raccolta di consuetudini feudali"
+            ],
+            corretta: 0
+          },
+          {
+            id: 184,
+            domanda: "Quale elemento caratterizza alla base la corrente della Pandettistica?",
+            opzioni: [
+              "L'abbandono totale del diritto romano",
+              "La riscoperta e lo studio sistematico del Digesto (o Pandette) di Giustiniano",
+              "La traduzione in tedesco del codice civile francese",
+              "La codificazione del solo diritto canonico"
+            ],
+            corretta: 1
+          },
+          {
+            id: 185,
+            domanda: "In cosa consiste principalmente l'effetto distorsivo causato dalla frode \"carosello\"?",
+            opzioni: [
+              "Nella creazione di monopoli di Stato in contrasto con le direttive comunitarie",
+              "Grazie all'omesso versamento dell'imposta, i beni circolano a prezzi più competitivi rispetto a quelli praticati dalle imprese che operano lecitamente",
+              "Nella mancata registrazione delle fatture passive nei registri nazionali",
+              "Nella delocalizzazione delle aziende italiane verso Paesi extra-UE"
+            ],
+            corretta: 1
+          },
+          {
+            id: 186,
+            domanda: "Il diritto all'informazione, previsto dallo Statuto dei diritti del Contribuente, stabilisce che:",
+            opzioni: [
+              "L'Amministrazione finanziaria deve assicurare la conoscenza delle leggi e delle disposizioni amministrative, anche attraverso la pubblicazione sul proprio sito web",
+              "L'Amministrazione deve limitarsi a fornire assistenza telefonica su richiesta specifica",
+              "Il contribuente ha l'onere esclusivo di reperire le norme tributarie presso la Gazzetta Ufficiale",
+              "L'informazione è dovuta solo in caso di accertamenti bancari avviati"
+            ],
+            corretta: 0
+          },
+          {
+            id: 187,
+            domanda: "Cosa prevedeva la Riforma Preti (anni 1971-1973) in merito al segreto bancario?",
+            opzioni: [
+              "L'abolizione totale del segreto bancario per ogni tipo di controllo fiscale",
+              "Che non vi fosse alcuna deroga al segreto bancario, rendendo i conti inaccessibili al fisco",
+              "La possibilità di derogare al segreto bancario in presenza di specifiche e gravi fattispecie accertate",
+              "L'attribuzione del potere di controllo sui conti bancari esclusivamente alla Guardia di Finanza senza autorizzazione"
+            ],
+            corretta: 2
+          },
+          {
+            id: 188,
+            domanda: "La funzione sociale della proprietà, come enunciata dalla Costituzione italiana:",
+            opzioni: [
+              "Considera la proprietà esclusivamente come un diritto soggettivo assoluto e illimitato",
+              "Riconosce la prevalenza degli aspetti patrimoniali sulla dignità della persona",
+              "Afferma la centralità della persona nell'ordinamento, ponendo limiti al diritto di proprietà per assicurarne l'utilità generale",
+              "Rappresenta una forma di proprietà collettiva tipica degli ordinamenti pre-unitari"
+            ],
+            corretta: 0
+          },
+          {
+            id: 189,
+            domanda: "Nel contesto del diritto europeo, la protezione del \"contraente debole\":",
+            opzioni: [
+              "Viene garantita attraverso l'attribuzione di uno specifico status, come quello di cittadino/consumatore",
+              "È limitata esclusivamente ai rapporti tra Stati membri",
+              "Non trova riconoscimento nei trattati istitutivi",
+              "È affidata alla libera negoziazione delle parti senza intervento normativo"
+            ],
+            corretta: 0
+          },
+          {
+            id: 190,
+            domanda: "Storicamente, il contratto di assicurazione ha conosciuto il suo primo sviluppo in:",
+            opzioni: [
+              "Italia e Spagna",
+              "Inghilterra e Germania",
+              "Francia e Paesi Bassi, diffondendosi solo successivamente nelle città italiane",
+              "Esclusivamente nelle repubbliche marinare italiane fin dalle origini"
+            ],
+            corretta: 2
+          },
+          {
+            id: 191,
+            domanda: "Quale specialità del Corpo della Guardia di Finanza esercita in via esclusiva le funzioni di polizia economica e finanziaria in mare?",
+            opzioni: [
+              "Il contingente ordinario di terra",
+              "Il dispositivo aeronavale",
+              "La polizia di frontiera",
+              "Nessuna, le competenze sono ripartite tra tutte le forze di polizia marittima"
+            ],
+            corretta: 1
+          },
+          {
+            id: 192,
+            domanda: "Nella concezione della cittadinanza romana (status civitatis), chi era escluso dal godimento dei pieni diritti?",
+            opzioni: [
+              "Solo gli stranieri residenti a Roma",
+              "Le donne, i bambini e gli schiavi",
+              "Esclusivamente i plebei",
+              "I militari in servizio attivo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 193,
+            domanda: "Quale impatto ha avuto la nascita della stampa sull'esperienza giuridica moderna?",
+            opzioni: [
+              "Ha reso obbligatoria la codificazione immediata",
+              "Ha determinato la possibilità di formare un'opinione libera senza la necessità di un'interpretazione estranea",
+              "Ha portato all'abolizione del diritto comune",
+              "Non ha avuto alcun rilievo, rimanendo il diritto una scienza per pochi eletti"
+            ],
+            corretta: 1
+          },
+          {
+            id: 194,
+            domanda: "Per quale ragione fondamentale nascono le prime forme di società nel diritto commerciale?",
+            opzioni: [
+              "Per aggirare i divieti canonici sull'usura",
+              "Per ripartire il rischio di impresa e reperire capitali ingenti non ottenibili tramite il semplice credito",
+              "Per distinguere il patrimonio del Re da quello dello Stato",
+              "Esclusivamente per gestire i latifondi agricoli"
+            ],
+            corretta: 1
+          },
+          {
+            id: 195,
+            domanda: "Chi furono i fondatori della \"Rivista di diritto commerciale\" nel 1903?",
+            opzioni: [
+              "Carlo Fadda e Paolo Emilio Bensa",
+              "Cesare Vivante e Angelo Sraffa",
+              "Widar Cesarini Sforza ed Enrico Finzi",
+              "Vittorio Scialoja e Giuseppe Zanardelli"
+            ],
+            corretta: 1
+          },
+          {
+            id: 196,
+            domanda: "Ai sensi dell'art. 23 della Costituzione, le prestazioni patrimoniali (tributarie):",
+            opzioni: [
+              "Possono essere imposte solo in base alla legge (riserva di legge)",
+              "Sono stabilite liberamente dall'Amministrazione Finanziaria",
+              "Sono regolate esclusivamente da decreti ministeriali",
+              "Non necessitano di una base legislativa primaria"
+            ],
+            corretta: 0
+          },
+          {
+            id: 197,
+            domanda: "Il dovere tributario, rispetto alle spese pubbliche, ha natura:",
+            opzioni: [
+              "Commutativa, in quanto lo Stato fornisce una specifica controprestazione al singolo",
+              "Non commutativa, in quanto non prevede una controprestazione diretta da parte dello Stato",
+              "Contrattuale, basata su un accordo privato tra cittadino e fisco",
+              "Volontaria e facoltativa"
+            ],
+            corretta: 1
+          },
+          {
+            id: 198,
+            domanda: "Secondo l'art. 53 della Costituzione, a chi è rivolto il dovere di concorrere alle spese pubbliche?",
+            opzioni: [
+              "Esclusivamente ai cittadini italiani residenti",
+              "A tutti i consociati, inclusi apolidi e stranieri, in ragione della loro capacità contributiva",
+              "Soltanto ai lavoratori dipendenti",
+              "Esclusivamente ai proprietari di beni immobili"
+            ],
+            corretta: 1
+          },
+          {
+            id: 199,
+            domanda: "Gli esponenti dell'Umanesimo giuridico criticarono la giurisprudenza medievale perché:",
+            opzioni: [
+              "Propugnavano una visione trascendentale della norma",
+              "Consideravano il diritto romano come espressione della \"vox umana\" e non come un testo sacro e immutabile",
+              "Volevano eliminare totalmente il diritto romano dall'Europa",
+              "Sostenevano l'interpretazione letterale della glossa"
+            ],
+            corretta: 1
+          },
+          {
+            id: 200,
+            domanda: "Il concorso alle spese pubbliche tramite il sistema tributario concorre a realizzare quale principio costituzionale?",
+            opzioni: [
+              "Il principio di eguaglianza formale (art. 3.1)",
+              "Il principio di eguaglianza sostanziale (art. 3.2), rimuovendo gli ostacoli che impediscono lo sviluppo della persona",
+              "Il principio della proprietà privata assoluta",
+              "Il principio della sovranità popolare"
+            ],
+            corretta: 1
+          },
+          {
+            id: 201,
+            domanda: "Secondo la Riforma Vanoni del 1951, entro quale termine doveva essere presentata la dichiarazione unica annuale per la generalità dei contribuenti?",
+            opzioni: [
+              "Dal 1° gennaio al 31 marzo di ogni anno",
+              "Dal 1° maggio al 30 giugno di ogni anno",
+              "Entro il 31 dicembre dell'anno di produzione",
+              "Entro 60 giorni dalla chiusura dell'esercizio finanziario"
+            ],
+            corretta: 0
+          },
+          {
+            id: 202,
+            domanda: "Quale ulteriore elemento di criticità caratterizzava il sistema tributario italiano al termine della seconda guerra mondiale, oltre all'elevato numero di imposte?",
+            opzioni: [
+              "L'assenza di sanzioni per l'evasione fiscale",
+              "Il susseguirsi di numerose circolari e istruzioni ministeriali spesso in contraddizione con la legge",
+              "L'impossibilità di presentare dichiarazioni per via telematica",
+              "La mancanza di uffici finanziari nelle zone rurali"
+            ],
+            corretta: 1
+          },
+          {
+            id: 203,
+            domanda: "In quale anno fu introdotta in Italia l'imposta complementare progressiva sul reddito delle persone fisiche?",
+            opzioni: [
+              "1923",
+              "1940",
+              "1951",
+              "1973"
+            ],
+            corretta: 0
+          },
+          {
+            id: 204,
+            domanda: "L'imposta sui celibi quale fascia d'età andava a colpire?",
+            opzioni: [
+              "I celibi compresi tra i 40 e i 70 anni di età",
+              "Le donne ricomprese tra i 14 e i 32 anni",
+              "I celibi maggiorenni con un reddito inferiore alle 20.000 lire",
+              "I celibi di età compresa tra i 25 e i 65 anni di età. si veniva esentati dal pagamento al compimento dei 66 anni"
+            ],
+            corretta: 3
+          },
+          {
+            id: 205,
+            domanda: "In quale anno Gian Gastone Bolla fondò la \"Rivista del diritto agrario\", sintetizzando la stagione di trasformazioni del settore?",
+            opzioni: [
+              "1914",
+              "1922",
+              "1930",
+              "1948"
+            ],
+            corretta: 1
+          },
+          {
+            id: 222,
+            domanda: "In quale anno Gian Gastone Bolla fondò la \"Rivista del diritto agrario\", sintetizzando la stagione di trasformazioni del settore?",
+            opzioni: [
+              "1914",
+              "1922",
+              "1930",
+              "1948"
+            ],
+            corretta: 1
+          },
+          {
+            id: 223,
+            domanda: "I giuristi Umanisti consideravano il Corpus iuris civilis:",
+            opzioni: [
+              "come diritto per eccellenza, valido universalmente per il presente e per il futuro",
+              "come un testo contaminato \"ab initio\" da una serie di errori ed espressione di una data epoca storica alla quale doveva essere circoscritta la sua auctoritas",
+              "come diritto vigente e fonte di principi e norme direttamente applicabili per la soluzione delle controversie contemporanee",
+              "come un complesso di norme universali e necessarie, preesistenti al diritto positivo"
+            ],
+            corretta: 1
+          },
+          {
+            id: 224,
+            domanda: "Con l'espressione \"proprietà scomposta\" ci si riferisce:",
+            opzioni: [
+              "alla concezione della proprietà del diritto romano classico che privilegiava la validità del titolo",
+              "alla concezione medioevale che sostituisce alla proprietà unitaria del diritto romano una proprietà complessa divisa in poteri autonomi sulla cosa",
+              "al concetto giuridico di proprietà elaborato dalla Scuola Pandettistica tedesca nel XIX secolo",
+              "allo scioglimento della comunione con conseguente divisione del bene oggetto del diritto"
+            ],
+            corretta: 1
+          },
+          {
+            id: 225,
+            domanda: "L'art. 53 della Costituzione afferma che:",
+            opzioni: [
+              "\"Tutti sono tenuti a concorrere alle spese pubbliche in ragione della loro capacità contributiva\" e al comma 2 precisa che \"Il sistema tributario è informato a criteri di progressività\".",
+              "\"Tutti sono tenuti... in ragione della loro capacità contributiva\" e precisa che il sistema non è informato a criteri di progressività.",
+              "\"Tutti sono tenuti... in ragione del loro patrimonio\" e precisa che il sistema è informato a criteri di proporzionalità.",
+              "\"Tutti sono tenuti... in ragione della rispettiva età\" e precisa che il sistema è informato al principio di cittadinanza."
+            ],
+            corretta: 0
+          },
+          {
+            id: 226,
+            domanda: "La Scuola Bolognese dei Glossatori:",
+            opzioni: [
+              "E' stata una Scuola giuridica fondata da Cino da Pistoia basata sull'utilizzo del commento.",
+              "è stata una Scuola di giuristi fondata da Irnerio (XI-XII secolo), la quale attraverso l'opera di analisi del Digestum annotato con la glossa è riuscita a trasformare questo antico testo in diritto positivo.",
+              "è stata una Scuola francese del XIX secolo.",
+              "è stato un movimento pittorico fiorito a Bologna nel secolo XVII."
+            ],
+            corretta: 1
+          },
+          {
+            id: 227,
+            domanda: "I giuristi Umanisti consideravano il Corpus iuris civilis:",
+            opzioni: [
+              "come diritto per eccellenza, valido universalmente per il presente e per il futuro.",
+              "come un testo contaminato \"ab initio\" da una serie di errori ed espressione di una data epoca storica alla quale doveva essere circoscritta la sua auctoritas.",
+              "come diritto vigente e fonte di norme direttamente applicabili per la soluzione delle controversie contemporanee.",
+              "come un complesso di norme universali e necessarie, preesistenti al diritto positivo."
+            ],
+            corretta: 1
+          },
+          {
+            id: 228,
+            domanda: "Con l'espressione \"proprietà scomposta\" ci si riferisce:",
+            opzioni: [
+              "alla concezione della proprietà del diritto romano classico che privilegiava la validità del titolo.",
+              "alla concezione medioevale della proprietà che sostituisce alla proprietà unitaria una proprietà complessa, che si scompone in tanti poteri autonomi ed immediati sulla cosa.",
+              "al concetto giuridico di proprietà elaborato dalla Scuola Pandettistica tedesca.",
+              "allo scioglimento della comunione con conseguente divisione del bene."
+            ],
+            corretta: 1
+          },
+          {
+            id: 229,
+            domanda: "Qual è la composizione tecnica dello \"ius commune\" (diritto comune)?",
+            opzioni: [
+              "La commistione tra diritto romano-giustinianeo, canonico ed elementi germanici",
+              "Un sistema basato esclusivamente sul diritto canonico e sulla teologia",
+              "L'insieme delle consuetudini mercantili senza alcun riferimento al diritto romano",
+              "Un ordinamento fondato unicamente sulle leggi emanate dal monarca assoluto"
+            ],
+            corretta: 0
+          },
+          {
+            id: 230,
+            domanda: "Qual è lo scopo fondamentale del principio di uniformità nell'ordinamento tributario?",
+            opzioni: [
+              "Consentire prelievi fiscali diversificati a parità di reddito per finalità politiche",
+              "Evitare disuguaglianze, impedendo prelievi diversi a parità di capacità contributiva",
+              "Permettere al legislatore di ignorare la capacità contributiva del singolo",
+              "Garantire la segretezza dei fatti generatori d'imposta rispetto alla Corte Costituzionale"
+            ],
+            corretta: 1
+          },
+          {
+            id: 231,
+            domanda: "Nel regime dell'imposta sul consumo del sale, in cosa consiste la \"privativa fiscale\"?",
+            opzioni: [
+              "Nella tassazione progressiva applicata solo ai commercianti all'ingrosso",
+              "Nel riconoscimento del libero mercato per la raffinazione del sale marino",
+              "Nel monopolio a favore dello Stato per la fabbricazione e/o la vendita del bene",
+              "Nella delega ai privati della riscossione dei tributi su base regionale"
+            ],
+            corretta: 2
+          }
+        ];
+
+        // Logica Applicazione
+        const app = {
+            currentMode: 'database',
+            session: {
+                mode: null, // 'quiz' oppure 'simulatore'
+                activeQuestions: [],
+                currentIndex: 0,
+                userAnswers: {}, // Mappa ID_Domanda -> IndiceOpzioneSelezionata
+                timeRemaining: 3600
+            },
+            timerInterval: null,
+            
+            // Inizializza l'interfaccia
+            init() {
+                // Gestione menu mobile
+                document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.remove('-translate-x-full');
+                });
+                document.getElementById('close-menu-btn').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.add('-translate-x-full');
+                });
+
+                this.switchView('database');
+            },
+
+            // Gestore Navigazione Views
+            switchView(view) {
+                this.currentMode = view;
+                
+                // Aggiorna UI Sidebar
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('text-ph-accent', 'border-ph-accent', 'bg-ph-panel');
+                    btn.classList.add('text-gray-400', 'border-transparent');
+                });
+                const activeBtn = document.getElementById(`nav-${view}`);
+                if(activeBtn) {
+                    activeBtn.classList.remove('text-gray-400', 'border-transparent');
+                    activeBtn.classList.add('text-ph-accent', 'border-ph-accent', 'bg-ph-panel');
+                }
+
+                // Chiudi sidebar su mobile
+                if(window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.add('-translate-x-full');
+                }
+
+                const container = document.getElementById('content-container');
+                container.innerHTML = '';
+
+                if (domandeDatabase.length === 0) {
+                    this.renderEmptyState(container);
+                    return;
+                }
+
+                if (view === 'database') {
+                    this.stopTimer(); // Ferma il timer se si naviga via
+                    this.renderDatabase(container);
+                } else if (view === 'quiz' || view === 'simulatore') {
+                    // Controlla se c'è una sessione in corso
+                    if (this.session.mode !== null) {
+                        if (this.session.mode === view) {
+                            // Riprendi sessione corrente
+                            this.renderQuestionEngine(container, view === 'simulatore' ? 'Simulatore Esame' : 'Quiz Continuo', view === 'simulatore');
+                            if (view === 'simulatore' && this.session.timeRemaining > 0) this.startTimer();
+                        } else {
+                            // Sta cercando di cambiare modalità mentre un'altra è attiva: forza azzeramento
+                            this.stopTimer();
+                            this.renderResumeOrReset(container, view);
+                        }
+                    } else {
+                        // Nessuna sessione, ne avvia una nuova
+                        this.startNewSession(view);
+                    }
+                }
+            },
+
+            renderEmptyState(container) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-64 text-center">
+                        <svg class="w-16 h-16 text-ph-border mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        <h2 class="text-2xl font-bold text-white mb-2">Nessuna domanda trovata</h2>
+                        <p class="text-gray-400 max-w-md">Il database è attualmente vuoto. Per favore, popola l'array <code class="text-ph-accent">domandeDatabase</code> nel codice sorgente per iniziare a utilizzare Solfa Hub.</p>
+                    </div>
+                `;
+            },
+
+            // === SEZIONE: CONSULTA DATABASE ===
+            renderDatabase(container) {
+                let html = `
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-white mb-2">Consulta Database</h1>
+                        <p class="text-gray-400">Archivio completo di tutte le ${domandeDatabase.length} domande con le relative risposte corrette. Le prime 30 sono relative all'intermedia.</p>
+                    </div>
+                    <div class="space-y-6">
+                `;
+
+                domandeDatabase.forEach((q, index) => {
+                    html += `
+                        <div class="bg-ph-panel border border-ph-border rounded-lg p-6 hover:border-gray-600 transition-colors">
+                            <h3 class="text-lg font-semibold text-white mb-4"><span class="text-ph-accent mr-2">#${index + 1}</span> ${q.domanda}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    `;
+                    q.opzioni.forEach((opt, optIndex) => {
+                        const isCorrect = optIndex === q.corretta;
+                        const styleClass = isCorrect ? 'bg-green-900/30 border-green-500 text-green-400' : 'bg-black/50 border-ph-border text-gray-400';
+                        const checkIcon = isCorrect ? `<svg class="w-5 h-5 ml-auto text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>` : '';
+                        
+                        html += `
+                            <div class="p-3 border rounded-md flex items-center ${styleClass}">
+                                <span>${opt}</span>
+                                ${checkIcon}
+                            </div>
+                        `;
+                    });
+                    html += `</div></div>`;
+                });
+
+                html += `</div>`;
+                container.innerHTML = html;
+            },
+
+            // === CORE FUNZIONI (Mescolamento e Avvio) ===
+            prepareShuffledQuestions(sourceArray, limit = null) {
+                let processed = sourceArray.map((q, idx) => ({ ...q, originalId: idx }));
+                processed = processed.sort(() => Math.random() - 0.5);
+                
+                if (limit && limit < processed.length) {
+                    processed = processed.slice(0, limit);
+                }
+
+                return processed.map(q => {
+                    let optionsWithFlags = q.opzioni.map((opt, idx) => ({
+                        testo: opt,
+                        isCorrect: idx === q.corretta,
+                        originalOptIndex: idx
+                    }));
+                    optionsWithFlags = optionsWithFlags.sort(() => Math.random() - 0.5);
+
+                    return { ...q, shuffledOptions: optionsWithFlags };
+                });
+            },
+
+            startNewSession(mode) {
+                this.stopTimer();
+                this.session.mode = mode;
+                this.session.activeQuestions = this.prepareShuffledQuestions(domandeDatabase, mode === 'simulatore' ? 40 : null);
+                this.session.currentIndex = 0;
+                this.session.userAnswers = {};
+                this.session.timeRemaining = 3600;
+
+                const container = document.getElementById('content-container');
+                this.renderQuestionEngine(container, mode === 'simulatore' ? 'Simulatore Esame' : 'Quiz Continuo', mode === 'simulatore');
+                
+                if (mode === 'simulatore') this.startTimer();
+            },
+
+            clearSessionAndRestart() {
+                const mode = this.session.mode;
+                this.session.mode = null;
+                this.startNewSession(mode);
+            },
+
+            renderResumeOrReset(container, targetMode) {
+                const currentName = this.session.mode === 'simulatore' ? 'Simulatore Esame' : 'Quiz Continuo';
+                const targetName = targetMode === 'simulatore' ? 'Simulatore Esame' : 'Quiz Continuo';
+                
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto bg-ph-panel border border-red-500/50 rounded-xl p-8 mt-10 shadow-2xl">
+                        <h2 class="text-3xl font-bold text-white mb-4">Attenzione: Sessione in corso</h2>
+                        <p class="text-gray-300 text-lg mb-8 leading-relaxed">
+                            Hai attualmente un <strong>${currentName}</strong> in corso nei tuoi progressi. <br>
+                            Prima di avviare un nuovo <strong>${targetName}</strong> rimescolando la banca dati, è necessario azzerare i progressi attuali.
+                        </p>
+                        
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                            <button onclick="app.switchView('${this.session.mode}')" class="px-6 py-3 rounded font-bold text-white bg-gray-700 hover:bg-gray-600 transition-colors w-full md:w-auto">
+                                Riprendi ${currentName}
+                            </button>
+                            <button onclick="app.clearSessionAndRestartTarget('${targetMode}')" class="px-6 py-3 rounded font-bold text-white bg-red-600 hover:bg-red-500 transition-colors w-full md:w-auto flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Azzera tutto e avvia ${targetName}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            clearSessionAndRestartTarget(targetMode) {
+                this.session.mode = null;
+                // Aggiorna anche il menù laterale
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('text-ph-accent', 'border-ph-accent', 'bg-ph-panel'));
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.add('text-gray-400', 'border-transparent'));
+                const activeBtn = document.getElementById(`nav-${targetMode}`);
+                if(activeBtn) {
+                    activeBtn.classList.remove('text-gray-400', 'border-transparent');
+                    activeBtn.classList.add('text-ph-accent', 'border-ph-accent', 'bg-ph-panel');
+                }
+                this.switchView(targetMode);
+            },
+
+            // === MOTORE DOMANDE E UI ===
+            renderQuestionEngine(container, title, isSimulator = false) {
+                const q = this.session.activeQuestions[this.session.currentIndex];
+                const answered = this.session.userAnswers[q.originalId] !== undefined;
+                
+                // Contatori Corrette/Errate
+                let correctCount = 0;
+                let incorrectCount = 0;
+                this.session.activeQuestions.forEach(question => {
+                    const ans = this.session.userAnswers[question.originalId];
+                    if (ans !== undefined) {
+                        if (question.shuffledOptions[ans].isCorrect) correctCount++;
+                        else incorrectCount++;
+                    }
+                });
+
+                let headerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">${title}</h1>
+                            <p class="text-sm text-gray-400 mt-1">Domanda <span class="text-ph-accent font-bold">${this.session.currentIndex + 1}</span> di ${this.session.activeQuestions.length}</p>
+                            <div class="flex gap-4 mt-3 text-sm font-semibold bg-black/50 inline-block px-3 py-1 rounded border border-ph-border">
+                                <span class="text-green-500">Corrette: ${correctCount}</span>
+                                <span class="text-gray-600">|</span>
+                                <span class="text-red-500">Errate: ${incorrectCount}</span>
+                            </div>
+                        </div>
+                `;
+
+                if (isSimulator) {
+                    headerHTML += `
+                        <div class="bg-ph-panel border border-ph-border px-4 py-2 rounded-lg flex items-center gap-2">
+                            <svg class="w-5 h-5 text-ph-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span id="timer-display" class="font-mono text-xl font-bold text-white">--:--</span>
+                        </div>
+                    `;
+                }
+                headerHTML += `</div>`;
+
+                // Progress Bar
+                const progressPercent = ((this.session.currentIndex + 1) / this.session.activeQuestions.length) * 100;
+                headerHTML += `
+                    <div class="w-full bg-ph-panel rounded-full h-1.5 mb-8">
+                      <div class="bg-ph-accent h-1.5 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                    </div>
+                `;
+
+                // Opzioni con Feedback Immediato
+                let optionsHTML = `<div class="space-y-3 mt-6">`;
+                q.shuffledOptions.forEach((opt, idx) => {
+                    const isSelected = this.session.userAnswers[q.originalId] === idx;
+                    
+                    let bgClass = 'bg-black/40';
+                    let borderClass = 'border-ph-border';
+                    let textClass = 'text-gray-200';
+                    let circleClass = 'border-gray-500 bg-transparent';
+
+                    if (answered) {
+                        if (opt.isCorrect) {
+                            bgClass = 'bg-green-900/30';
+                            borderClass = 'border-green-500';
+                            textClass = 'text-green-400 font-bold';
+                            circleClass = 'border-green-500 bg-green-500';
+                        } else if (isSelected && !opt.isCorrect) {
+                            bgClass = 'bg-red-900/30';
+                            borderClass = 'border-red-500';
+                            textClass = 'text-red-400';
+                            circleClass = 'border-red-500 bg-red-500';
+                        }
+                    }
+
+                    const clickHandler = !answered ? `onclick="app.selectOption(${idx})"` : '';
+                    const cursorClass = answered ? 'cursor-default' : 'cursor-pointer hover:border-gray-500';
+
+                    optionsHTML += `
+                        <div class="relative block ${cursorClass} group" ${clickHandler}>
+                            <div class="border ${borderClass} ${bgClass} rounded-lg p-4 transition-all flex items-center">
+                                <div class="w-5 h-5 border-2 ${circleClass} rounded-full mr-4 flex-shrink-0 transition-colors"></div>
+                                <span class="${textClass} text-lg">${opt.testo}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                optionsHTML += `</div>`;
+
+                let footerHTML = `<div class="mt-8 flex justify-between items-center pt-6 border-t border-ph-border">`;
+                
+                // Pulsante Indietro (per rivedere ma non modificare)
+                if (this.session.currentIndex > 0) {
+                    footerHTML += `
+                        <button onclick="app.navigate(-1)" class="px-6 py-2 rounded font-semibold text-white bg-ph-panel border border-ph-border hover:bg-gray-800 transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Indietro
+                        </button>
+                    `;
+                } else {
+                    footerHTML += `<div></div>`; // Spacer
+                }
+
+                // Pulsante Avanti / Vedi Statistiche
+                if (this.session.currentIndex < this.session.activeQuestions.length - 1) {
+                    if (answered) {
+                        footerHTML += `
+                            <button onclick="app.navigate(1)" class="px-6 py-2 rounded font-bold text-black bg-ph-accent hover:bg-ph-accentHover transition-colors flex items-center gap-2">
+                                Avanti <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        `;
+                    } else {
+                        footerHTML += `
+                            <button disabled class="px-6 py-2 rounded font-bold text-black bg-ph-accent/30 cursor-not-allowed flex items-center gap-2" title="Rispondi per proseguire">
+                                Avanti <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        `;
+                    }
+                } else {
+                    if (answered) {
+                        footerHTML += `
+                            <button onclick="app.submitSession()" class="px-6 py-2 rounded font-bold text-white bg-green-600 hover:bg-green-700 transition-colors flex items-center gap-2 shadow-lg shadow-green-900/50">
+                                Vedi Statistiche
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            </button>
+                        `;
+                    } else {
+                        footerHTML += `
+                            <button disabled class="px-6 py-2 rounded font-bold text-white bg-green-600/30 cursor-not-allowed flex items-center gap-2">
+                                Vedi Statistiche
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            </button>
+                        `;
+                    }
+                }
+                footerHTML += `</div>`;
+
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto">
+                        ${headerHTML}
+                        <div class="bg-ph-panel border border-ph-border rounded-xl p-6 md:p-8 shadow-xl">
+                            <h2 class="text-xl md:text-2xl font-semibold text-white leading-relaxed">
+                                ${q.domanda}
+                            </h2>
+                            ${optionsHTML}
+                        </div>
+                        ${footerHTML}
+                    </div>
+                `;
+
+                if (isSimulator) this.updateTimerDisplay(); // Assicura che mostri i dati subito
+            },
+
+            // Gestione selezione risposta (Feedback Immediato)
+            selectOption(shuffledOptIndex) {
+                const q = this.session.activeQuestions[this.session.currentIndex];
+                if (this.session.userAnswers[q.originalId] !== undefined) return; // Impedisce di cambiare risposta
+                
+                this.session.userAnswers[q.originalId] = shuffledOptIndex;
+                
+                // Ri-renderizza per mostrare i colori corretto/errato e sbloccare il tasto Avanti
+                const container = document.getElementById('content-container');
+                this.renderQuestionEngine(container, this.session.mode === 'simulatore' ? 'Simulatore Esame' : 'Quiz Continuo', this.session.mode === 'simulatore');
+            },
+
+            // Navigazione tra le domande
+            navigate(direction) {
+                const newIndex = this.session.currentIndex + direction;
+                if (newIndex >= 0 && newIndex < this.session.activeQuestions.length) {
+                    this.session.currentIndex = newIndex;
+                    const container = document.getElementById('content-container');
+                    this.renderQuestionEngine(container, this.session.mode === 'simulatore' ? 'Simulatore Esame' : 'Quiz Continuo', this.session.mode === 'simulatore');
+                }
+            },
+
+            // === TIMER LOGICA ===
+            startTimer() {
+                this.updateTimerDisplay();
+                this.timerInterval = setInterval(() => {
+                    this.session.timeRemaining--;
+                    this.updateTimerDisplay();
+                    
+                    if (this.session.timeRemaining <= 0) {
+                        this.stopTimer();
+                        alert("Tempo scaduto! L'esame verrà concluso automaticamente.");
+                        this.submitSession();
+                    }
+                }, 1000);
+            },
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            },
+
+            updateTimerDisplay() {
+                const display = document.getElementById('timer-display');
+                if (!display) return;
+                
+                const m = Math.floor(this.session.timeRemaining / 60).toString().padStart(2, '0');
+                const s = (this.session.timeRemaining % 60).toString().padStart(2, '0');
+                display.textContent = `${m}:${s}`;
+
+                if (this.session.timeRemaining < 300) { // Sotto 5 minuti, diventa rosso
+                    display.classList.remove('text-white');
+                    display.classList.add('text-red-500');
+                }
+            },
+
+            // === RISULTATI E STATISTICHE ===
+            submitSession() {
+                this.stopTimer();
+                const container = document.getElementById('content-container');
+                
+                let score = 0;
+                let resultsHTML = `
+                    <div class="mb-8 text-center">
+                        <h1 class="text-4xl font-bold text-white mb-2">Statistiche ${this.session.mode === 'simulatore' ? 'Esame' : 'Quiz'}</h1>
+                        <p class="text-gray-400">Ecco il riepilogo dettagliato della tua sessione.</p>
+                    </div>
+                    <div class="space-y-6 max-w-4xl mx-auto">
+                `;
+
+                this.session.activeQuestions.forEach((q, index) => {
+                    const userAnswerIdx = this.session.userAnswers[q.originalId];
+                    const hasAnswered = userAnswerIdx !== undefined;
+                    let isCorrect = false;
+                    let selectedOptObj = null;
+
+                    if (hasAnswered) {
+                        selectedOptObj = q.shuffledOptions[userAnswerIdx];
+                        isCorrect = selectedOptObj.isCorrect;
+                        if (isCorrect) score++;
+                    }
+
+                    const correctOptObj = q.shuffledOptions.find(o => o.isCorrect);
+                    const borderClass = isCorrect ? 'border-green-500/50' : (hasAnswered ? 'border-red-500/50' : 'border-yellow-500/50');
+                    const headerClass = isCorrect ? 'text-green-400' : (hasAnswered ? 'text-red-400' : 'text-yellow-400');
+                    const statusText = isCorrect ? 'Corretta' : (hasAnswered ? 'Errata' : 'Non risposto');
+
+                    resultsHTML += `
+                        <div class="bg-ph-panel border ${borderClass} rounded-lg p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-lg font-semibold text-white pr-4"><span class="text-gray-500 mr-2">${index + 1}.</span>${q.domanda}</h3>
+                                <span class="px-3 py-1 rounded text-xs font-bold bg-black/50 ${headerClass} whitespace-nowrap border ${borderClass}">${statusText}</span>
+                            </div>
+                            
+                            <div class="space-y-2 mt-4">
+                                <div class="p-3 rounded bg-black/40 border border-ph-border">
+                                    <span class="text-xs text-gray-500 uppercase font-bold tracking-wider block mb-1">La tua risposta:</span>
+                                    <span class="${isCorrect ? 'text-green-400' : 'text-red-400'}">${hasAnswered ? selectedOptObj.testo : 'Nessuna risposta'}</span>
+                                </div>
+                                
+                                ${!isCorrect ? `
+                                <div class="p-3 rounded bg-green-900/10 border border-green-900/50">
+                                    <span class="text-xs text-green-600 uppercase font-bold tracking-wider block mb-1">Risposta corretta:</span>
+                                    <span class="text-green-400">${correctOptObj.testo}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                resultsHTML += `</div>`;
+                
+                const passed = score >= (this.session.activeQuestions.length * 0.6); 
+                const scoreColor = passed ? 'text-green-400' : 'text-red-500';
+
+                // Modificato: Ora il pulsante di riavvio forza esplicitamente l'azzeramento della sessione
+                const scoreBoard = `
+                    <div class="max-w-4xl mx-auto bg-black border border-ph-border rounded-xl p-8 mb-8 text-center shadow-2xl">
+                        <h2 class="text-6xl font-black ${scoreColor} mb-2">${score} <span class="text-2xl text-gray-500">/ ${this.session.activeQuestions.length}</span></h2>
+                        <p class="text-xl text-white mb-8">${passed ? 'Ottimo lavoro! Soglia superata.' : 'Soglia non raggiunta. Continua ad esercitarti.'}</p>
+                        
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-4 border-t border-ph-border pt-8">
+                            <p class="text-gray-400 text-sm md:w-1/2 text-left pr-4">Per ripetere il test con nuove domande mescolate casualmente dal database, è necessario azzerare i progressi di questa sessione.</p>
+                            <button onclick="app.clearSessionAndRestart()" class="px-8 py-3 rounded font-bold text-black bg-ph-accent hover:bg-ph-accentHover transition-colors inline-flex items-center justify-center gap-2 flex-1 w-full">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                Azzera e Genera Nuovo Test
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = scoreBoard + resultsHTML;
+            }
+        };
+
+        // Avvio Applicazione al caricamento
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>
